@@ -1,0 +1,65 @@
+.buttons{
+  width: 95%;
+  display: flex;
+  flex-direction: row;
+  justify-content:end;
+  padding: "8px";
+}
+.addAsset{
+    width:95%;
+    display:flex;
+    flex-direction: column;
+}
+.addAssetTitle{
+  font-size: 25px;
+  font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  margin-top: 0px;
+  margin-bottom: 0px;
+}
+/* basic */
+.basic {
+  margin-top: 5px;
+  
+  margin-bottom: 0px;
+  width: 95%;
+  height: 30vh;
+  background-color: white;
+  border: 2px solid rgb(134, 166, 230);
+  border-radius: 8px;
+  padding-bottom: 0px;
+}
+.inputs{
+  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  width: "250px";
+  justify-content:space-between;
+}
+  .basictitle{
+    font-size: 1.5em;
+    margin-left: 6px;
+    margin-top: 6px;
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+  }  
+  /* details */
+  .details{
+    margin-top: 0px;
+    margin-bottom: 5px;
+    width: 95%;
+    height: 35vh;
+    background-color: white;
+    border: 2px solid rgb(134, 166, 230);
+    border-radius: 8px;
+    padding-top: 0px;
+    }
+    
+    .detailstitle{
+      font-size: 1.5em;
+      margin-left: 6px;
+      margin-top: 6px;
+      margin-bottom: 0px;
+      padding-bottom: 0px;
+      font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    }
+
+  

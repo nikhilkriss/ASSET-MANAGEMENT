@@ -1,0 +1,32 @@
+.basic {
+  margin-top: 5px;
+  
+  margin-bottom: 0px;
+  width: 95%;
+  height: 30vh;
+  background-color: white;
+  border: 2px solid rgb(134, 166, 230);
+  border-radius: 8px;
+  padding-bottom: 0px;
+}
+
+.inputs{
+  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  width: "250px";
+  justify-content:space-between;
+}
+
+
+
+
+
+  .basictitle{
+    font-size: 1.5em;
+    margin-left: 6px;
+    margin-top: 6px;
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+  }  
+
+  
