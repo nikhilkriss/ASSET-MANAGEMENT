@@ -1,0 +1,47 @@
+{
+  "blogs": [
+    {
+      "id": 2,
+      "EmployeeName": "Ajay",
+      "Asset": "Laptop",
+      "Brand": "Dell"
+    },
+    {
+      "id": 1,
+      "EmployeeName": "Nikhil",
+      "Asset": "Laptop",
+      "Brand": "Dell"
+    },
+
+    {
+      "id": 3,
+      "EmployeeName": "Raghav",
+      "Asset": "Laptop",
+      "Brand": "Dell"
+    },
+    {
+      "id": 4,
+      "EmployeeName": "Sirisha",
+      "Asset": "Laptop",
+      "Brand": "Dell"
+    }
+  ],
+  "assets": [
+    {
+      "brand": "Dell",
+      "category": "Laptop",
+      "displayDimensions": "20inches",
+      "hdm": "d3",
+      "id": "11",
+      "model": "Dell Model 1",
+      "os": "windows",
+      "osVersion": "j",
+      "ownedByProxima": false,
+      "processor": "s",
+      "carePaqExpDate": "2023-07-11",
+      "ram": "3d",
+      "serialNumber": "s",
+      "warrantyStatus": "inWarranty"
+    }
+  ]
+}

@@ -1,0 +1,153 @@
+[
+    {
+      "id": 1,
+      "Asset": "Laptop",
+      "Brand": "Dell",
+      "email": "Sincere@april.biz",
+      
+      "Serial Number": "1-770-736-8031 x56442",
+      "warranty status": "expired",
+      "company": {
+        "name": "Romaguera-Crona",
+        "catchPhrase": "Multi-layered client-server neural-net",
+        "bs": "harness real-time e-markets"
+      }
+    },
+    {
+      "id": 2,
+      "Asset": "Macbook",
+      "Brand": "Apple",
+      "email": "Shanna@melissa.tv",
+      
+      "Serial Number": "010-692-6593 x09125",
+      "warranty status": "expired",
+      "company": {
+        "Asset": "Deckow-Crist",
+        "catchPhrase": "Proactive didactic contingency",
+        "bs": "synergize scalable supply-chains"
+      }
+    },
+    {
+      "id": 3,
+      "Asset": "Laptop",
+      "Brand": "HP",
+      "email": "Nathan@yesenia.net",
+      
+      "Serial Number": "1-463-123-4447",
+      "warranty status": "expired",
+      "company": {
+        "Asset": "Romaguera-Jacobson",
+        "catchPhrase": "Face to face bifurcated interface",
+        "bs": "e-enable strategic applications"
+      }
+    },
+    {
+      "id": 4,
+      "Asset": "Laptop",
+      "Brand": "lenovo",
+      "email": "Julianne.OConner@kory.org",
+      
+      "Serial Number": "493-170-9623 x156",
+      "warranty status": "expired",
+      "company": {
+        "Asset": "Robel-Corkery",
+        "catchPhrase": "Multi-tiered zero tolerance productivity",
+        "bs": "transition cutting-edge web services"
+      }
+    },
+    {
+      "id": 5,
+      "Asset": "Mouse",
+      "Brand": "Zebronics",
+      "email": "Lucio_Hettinger@annie.ca",
+      
+      "Serial Number": "(254)954-1289",
+      "warranty status": "expired",
+      "company": {
+        "Asset": "Keebler LLC",
+        "catchPhrase": "User-centric fault-tolerant solution",
+        "bs": "revolutionize end-to-end systems"
+      }
+    },
+    {
+      "id": 6,
+      "Asset": "Laptop",
+      "Brand": "HP",
+      "email": "Karley_Dach@jasper.info",
+      
+      "Serial Number": "1-477-935-8478 x6430",
+      "warranty status": "expired",
+      "company": {
+        "name": "Considine-Lockman",
+        "catchPhrase": "Synchronised bottom-line interface",
+        "bs": "e-enable innovative applications"
+      }
+    },
+    {
+      "id": 7,
+      "Asset": "Laptop",
+      "Brand": "lenovo",
+      "email": "Telly.Hoeger@billy.biz",
+      
+      "address": {
+        "street": "Rex Trail",
+        "suite": "Suite 280",
+        "city": "Howemouth",
+        "zipcode": "58804-1099",
+        "geo": {
+          "lat": "24.8918",
+          "lng": "21.8984"
+        }
+      },
+      "Serial Number": "210.067.6132",
+      "warranty status": "elvis.io",
+      "company": {
+        "name": "Johns Group",
+        "catchPhrase": "Configurable multimedia task-force",
+        "bs": "generate enterprise e-tailers"
+      }
+    },
+    {
+      "id": 8,
+      "Asset": "Laptop",
+      "Brand": "Dell",
+      "email": "Sherwood@rosamond.me",
+      
+      "Serial Number": "586.493.6943 x140",
+      "warranty status": "jacynthe.com",
+      "company": {
+        "name": "Abernathy Group",
+        "catchPhrase": "Implemented secondary concept",
+        "bs": "e-enable extensible e-tailers"
+      }
+    },
+    {
+      "id": 9,
+      "Asset": "Mouse",
+      "Brand": "Dell",
+      "email": "Chaim_McDermott@dana.io",
+      
+      
+      "Serial Number": "(775)976-6794 x41206",
+      "warranty status": "conrad.com",
+      "company": {
+        "name": "Yost and Sons",
+        "catchPhrase": "Switchable contextually-based project",
+        "bs": "aggregate real-time technologies"
+      }
+    },
+    {
+      "id": 10,
+      "Asset": "Macbook",
+      "Brand": "Apple",
+      "email": "Rey.Padberg@karina.biz",
+      
+      "Serial Number": "024-648-3804",
+      "warranty status": "ambrose.net",
+      "company": {
+        "name": "Hoeger LLC",
+        "catchPhrase": "Centralized empowering task-force",
+        "bs": "target end-to-end models"
+      }
+    }
+  ]

@@ -1,7 +1,7 @@
 [
     {
         "assetId":1,
-        "brand":"dell",
+        "brand":"dcev",
         "asset":"laptop",
         "yearsOfExperience":5,
         "osVersion":"HTML,CSS,JS",
@@ -9,8 +9,8 @@
     },
     {
         "assetId":2,
-        "brand":"lenovo",
-        "asset":"laptop",
+        "brand":"rfetg",
+        "asset":"laptoperev",
         "yearsOfExperience":5,
         "osVersion":"HTML,CSS,JS",
         "ownedByProxima":"React,Node"

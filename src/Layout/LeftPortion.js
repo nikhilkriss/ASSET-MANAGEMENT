@@ -7,13 +7,12 @@ function LeftPortion({ displayPage }) {
 
   const [page, setPage] = useState({
     addAsset: true,
-    // editAsset: false,
     allocateAsset: false,
-    allAssets: false,
-    allocatedAssets: false,
-    unAllocatedAssets: false,
+    eaa: false,
+    sbe: false,
+    sbs: false,
   });
-  
+
   useEffect(() => {
     displayPage({ page });
   }, [page]);
@@ -28,34 +27,48 @@ function LeftPortion({ displayPage }) {
   };
   const handleAddAsset = () => {
     setPage({
-      // editAsset: false,
-      allocateAsset: false,
-      allAssets: false,
-      allocatedAssets: false,
-      unAllocatedAssets: false,
       addAsset: true,
+      allocateAsset: false,
+      eaa: false,
+      sbe: false,
+      sbs: false,
     });
   };
-  // const handleEditAsset = () => {
-  //   setPage({
-  //     addAsset: false,
-  //     editAsset: true,
-  //     allocateAsset: false,
-  //     allAssets: false,
-  //     allocatedAssets: false,
-  //     unAllocatedAssets: false,
-      
-  //   });
-  // };
+  
   const handleaAllocateAsset = () => {
     setPage({
       addAsset: false,
-      // editAsset: false,
       allocateAsset: true,
-      allAssets: false,
-      allocatedAssets: false,
-      unAllocatedAssets: false,
-      
+      eaa: false,
+      sbe: false,
+      sbs: false
+    });
+  };
+  const handleEaa=()=>{
+    setPage({
+      addAsset: false,
+      allocateAsset: false,
+      eaa: true,
+      sbe: false,
+      sbs: false
+    })
+  };
+  const handleSbe=()=>{
+    setPage({
+      addAsset: false,
+      allocateAsset: false,
+      eaa: false,
+      sbe: true,
+      sbs: false
+    })
+  };
+  const handleSbs=()=>{
+    setPage({
+      addAsset: false,
+      allocateAsset: false,
+      eaa: false,
+      sbe: false,
+      sbs: true
     });
   };
   return (
@@ -70,9 +83,6 @@ function LeftPortion({ displayPage }) {
             <div className="submenu-item" onClick={handleAddAsset}>
               Add Asset
             </div>
-            {/* <div className="submenu-item" onClick={handleEditAsset}>
-              Edit Asset
-            </div> */}
             <div className="submenu-item" onClick={handleaAllocateAsset}>
               Allocate Asset
             </div>
@@ -84,9 +94,9 @@ function LeftPortion({ displayPage }) {
         </div>
         {showReportsSubMenu && (
           <div className="submenu">
-            <div className="submenu-item">All Assets</div>
-            <div className="submenu-item">Allocated Assets</div>
-            <div className="submenu-item">Unallocated Assets</div>
+            <div className="submenu-item" onClick={handleEaa}>Employee Asset Allocation</div>
+            <div className="submenu-item" onClick={handleSbe}>Search By Employee</div>
+            <div className="submenu-item" onClick={handleSbs}>Search By Specification</div>
           </div>
         )}
       </div>
