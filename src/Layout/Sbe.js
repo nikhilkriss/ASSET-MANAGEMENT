@@ -8,12 +8,10 @@ import {
   TextareaAutosize,
 } from "@mui/material";
 import DataTable from "react-data-table-component";
-import employeeDetails from "./employeeDetails.json";
 import axios from "axios";
 import { Button, Box } from "@mui/material";
-import apiConfig from "../config";
+import config from "../config";
 import { useForm } from "react-hook-form";
-import AssetInfo from "./AssetInfo.json";
 import {
   Dialog,
   DialogContent,
@@ -40,97 +38,165 @@ const tableCustomStyles = {
     },
   },
 };
-const Sbe = () => {
+
+const Sbe = ({ sbeAllocation }) => {
   const { register, handleSubmit } = useForm();
   const [searchName, setSearchName] = useState(null);
   const [searchId, setSearchId] = useState(null);
-  const [filteredData, setFilteredData] = useState(employeeDetails);
+  const [filteredData, setFilteredData] = useState();
   const [nameErr, setNameErr] = useState(false);
   const [idErr, setIdErr] = useState(false);
-  const [deallocate, setDeallocate] = useState(false);
+  const [deallocatePage, setDeallocatePage] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [giveChance, setGiveChance] = useState(false);
-  const [assetData, setAssetData] = useState(AssetInfo[2]);
+  const [assetData, setAssetData] = useState([]);
   const [selectedRow, setSelectedRow] = useState(null);
-  const [deallocateEmpName, setDeallocateEmpName] = useState("");
+  const [employeeName, setEmployeeName] = useState(null);
+  const [employeeId, setEmployeeId] = useState(null);
 
+  const [tableState, setTableState] = useState(false);
+
+  const [allocateDabba, setAllocateDabba] = useState(false);
+  const [noEmp, setNoEmp] = useState(false);
+  const [passingId, setPassingId] = useState(null);
+  const [passingName, setPassingName] = useState(null);
+  const [searchChance, setSearchChance] = useState(false);
+  useEffect(() => {
+    setEmployeeId(null);
+    setEmployeeName(null);
+  }, []);
   const searchHandler = () => {
     //validation
+    setAllocateDabba(false);
+    setNoEmp(false);
+    setTableState(false);
+    setEmployeeId(null);
+    setEmployeeName(null);
+    setSearchChance(!searchChance);
     if (!searchName && !searchId) {
       setNameErr(true);
       setIdErr(true);
     } else {
       setNameErr(false);
       setIdErr(false);
+      setEmployeeId(searchId);
+      setEmployeeName(searchName);
     }
-    //api-search
-    // if (!searchName === false || !searchId === false) {
-    var path = apiConfig.apiBaseUrl + `/${searchId}`;
-    // console.log(path);
-    // console.log();
-    axios
-      .get(`http://localhost:8000/blogs`)
-      .then((res) => {
-        console.log(res.data);
-        setFilteredData(res);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-    // }
   };
   useEffect(() => {
-    console.log(selectedRow);
-  }, [selectedRow]);
+    if (employeeId || employeeName) {
+      console.log(employeeName);
+      console.log(employeeId);
+      let path =
+        config.API_ENDPOINT2 +
+        `v1/EmployeeProfiles${
+          employeeName ? `/EmployeeName/${employeeName}` : ""
+        }${employeeId ? `/${employeeId}` : ""}`;
+      console.log(path);
+      axios
+        .get(path)
+        .then((res) => {
+          console.log(res);
+          console.log(res.data.employees.length);
+          if (res.data.employees.length === 0) {
+            setNoEmp(true);
+            setAllocateDabba(false);
+            setTableState(false);
+          } else if (res.data.employees.length > 0) {
+            setNoEmp(false);
+            setAllocateDabba(false);
+            setPassingId(res.data.employees[0].employee_id);
+            setPassingName(res.data.employees[0].employee_name);
+            console.log(noEmp);
+            // console.log(config.API_ENDPOINT +`v1/AssetAllocation/${employeeName}/${employeeName}`)
+            axios
+              .get(
+                config.API_ENDPOINT +
+                  `v1/AssetAllocation/${
+                    employeeName ? employeeName + "/" : ""
+                  }${employeeId ? employeeId : ""}`
+              )
+              .then((res) => {
+                console.log(res);
+                setTableState(true); 
+                setFilteredData(res.data);
+                setAllocateDabba(false);
+              })
+              .catch((err) => {
+                console.log(err);
+                if (err.response.status === 404) {
+                  // employee with no assets
+                  console.log("asdfghjklpoiuytrewq")
+                  setNoEmp(false);
+                  setTableState(false);
+                  setAllocateDabba(true);
+                }
+              });
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+          if (err.response.status === 404) {
+            setNoEmp(true);
+            setAllocateDabba(false);
+            setTableState(false);
+          }
+        });
+    }
+  }, [employeeId, employeeName, searchChance]);
+
   useEffect(() => {
     if (selectedRow) {
-      setDeallocate(true);
+      setDeallocatePage(true);
       setAssetData(selectedRow);
       console.log(selectedRow);
     }
   }, [selectedRow]);
+
   const columns = [
     {
       name: "Employee Id",
-      selector: (row) => row.employeeId,
+      selector: (row) => row.employee_id,
     },
     {
       name: "Employee Name",
-      selector: (row) => row.employeeName,
-      // onCellClicked: (row) => setSelectedRow(row),
       cell: (row) => (
         <a
           href="#"
           style={{ cursor: "pointer" }}
           onClick={() => setSelectedRow(row)}
         >
-          {row.employeeName}
+          {row.employee_name}
         </a>
       ),
     },
     {
+      name: "Asset Id",
+      selector: (row) => row.asset_id,
+    },
+    {
       name: "Asset",
-      selector: (row) => row.Asset,
+      selector: (row) => row.category_name,
     },
     {
       name: "Brand",
-      selector: (row) => row.Brand,
+      selector: (row) => row.brand,
     },
-    // {
-    //       name:"Primary Skills",
-    //       selector:(row)=>row.primarySkills
-    // }
   ];
   const labelStyles = {
     fontSize: "0.875rem",
   };
+
+  const allocation = () => {
+    sbeAllocation(passingId, passingName);
+  };
+
   const postDeallocation = async (formData) => {
     try {
-      // console.log(endpoint)
-      // const path= `${endpoint}/v1/Assets`;
-      const response = await axios.post(
-        `https://jsonplaceholder.typicode.com/users`,
-        formData
+      console.log(assetData.asset_id);
+      const response = await axios.delete(
+        config.API_ENDPOINT +
+          `v1/AssetAllocation/${assetData.asset_id}${formData.reason?`/${formData.reason}`:''}`
       );
       console.log(response);
       setDialogOpen(true);
@@ -138,6 +204,7 @@ const Sbe = () => {
       console.log(error);
     }
   };
+
   useEffect(() => {
     if (dialogOpen && !giveChance) {
       setGiveChance(true);
@@ -145,40 +212,62 @@ const Sbe = () => {
   }, [dialogOpen]);
   useEffect(() => {
     if (!dialogOpen && giveChance) {
-      setDeallocate(false);
-      setFilteredData("");
+      setDeallocatePage(false);
+      setTableState(false);
+      setFilteredData([]);
+      setAllocateDabba(false);
+      setNoEmp(false);
     }
   }, [giveChance, dialogOpen]);
   const handleFormSubmit = (formData) => {
     postDeallocation(formData);
   };
+  // const stringifyNestedObjects = (value) => {
+  //   if (typeof value === "object" && value !== null) {
+  //     return Object.entries(value)
+  //       .map(([key, val]) => {
+  //         if (typeof val === "boolean") {
+  //           return `${key}: ${val ? "Yes" : "No"}`;
+  //         } else if (val !== null && val !== "" && val !== undefined) {
+  //           return `${key}: ${val}`;
+  //         }
+  //         return null;
+  //       })
+  //       .filter((item) => item !== null)
+  //       .join(", ");
+  //   }
+  //   return value;
+  // };
+  const capitalizeFirstLetter = (str) => {
+    return str.replace(/\b\w/g, (match) => match.toUpperCase());
+  };
+
+  const replaceUnderscoreWithSpace = (str) => {
+    return str.replace(/_/g, " ");
+  };
+
   const stringifyNestedObjects = (value) => {
     if (typeof value === "object" && value !== null) {
       return Object.entries(value)
         .map(([key, val]) => {
-          if (typeof val === "boolean") {
-            return `${key}: ${val ? "Yes" : "No"}`;
-          } else if (val !== "") {
-            return `${key}: ${val}`;
+          if (val === null || val === "") {
+            return null;
+          } else if (typeof val === "boolean") {
+            return `${replaceUnderscoreWithSpace(key)}: ${val ? "Yes" : "No"}`;
+          } else {
+            return `${replaceUnderscoreWithSpace(key)}: ${val}`;
           }
-          return null;
         })
         .filter((item) => item !== null)
         .join(", ");
     }
     return value;
   };
-  const idChange = (e) => {
-    console.log(e.target.value);
-    setSearchId(e.target.value);
-  };
   return (
     <div className="bg-cont-search-skill">
-      {!deallocate ? ( //deallocate state will decide which page will render
-        <div className="search">
-          <div className="searchByEmployeeHeading" style={{ marginTop: "0px" }}>
-            Search By Employee
-          </div>
+      {!deallocatePage ? (
+        <div>
+          <div className="searchByEmployeeHeading">Search By Employee</div>
           <div className="top">
             <Stack
               direction="row"
@@ -187,29 +276,19 @@ const Sbe = () => {
             >
               <div style={{ display: "flex", flexDirection: "column" }}>
                 <FormControl error>
-                  {/* <TextareaAutosize
-            value={searchName}
-            style={{borderColor:nameErr?"#F44336":""}}
-            placeholder='Enter Your Skills'
-            className={nameErr?"placeholder":"textAreaAutoSize"}
-            //onFocus={handleInputFocus}
-            onChange={(e)=>setSearchName(e.target.value)}
-            /> */}
                   <TextField
                     label="Employee Name"
                     sx={{ width: "210px" }}
                     value={searchName}
                     style={{ borderColor: nameErr ? "#F44336" : "" }}
-                    placeholder="Enter Your Skills"
+                    placeholder="Enter employee name"
                     // className={nameErr?"placeholder":"textAreaAutoSize"}
                     size="small"
                     onChange={(e) => setSearchName(e.target.value)}
                   />
                 </FormControl>
                 {nameErr ? (
-                  <p className="label-text" style={{ marginBottom: "2px" }}>
-                    * Please Enter Skills
-                  </p>
+                  <p className="label-text">Please enter Employee name</p>
                 ) : (
                   ""
                 )}
@@ -220,13 +299,11 @@ const Sbe = () => {
                   label="Employee Id"
                   size="small"
                   sx={{ width: "210px" }}
-                  onChange={idChange}
+                  onChange={(e) => setSearchId(e.target.value)}
                   error={idErr}
                 />
                 {idErr ? (
-                  <p className="label-text" style={{ marginBottom: "2px" }}>
-                    * Please Enter Experience
-                  </p>
+                  <p className="label-text">Please Enter Employee Id</p>
                 ) : (
                   ""
                 )}
@@ -242,26 +319,52 @@ const Sbe = () => {
               Search
             </Button>
           </div>
-          <div>
-            <DataTable
-              //title="Employee Details"
-              columns={columns}
-              data={filteredData}
-              fixedHeader
-              fixedHeaderScrollHeight="300px"
-              customStyles={tableCustomStyles}
-              // selected={selectedRow}
-              // selectableRows
-              //pagination
-            ></DataTable>
-          </div>
+          {!allocateDabba && !noEmp && tableState && (
+            <div>
+              <DataTable
+                columns={columns}
+                data={filteredData}
+                fixedHeader
+                fixedHeaderScrollHeight="60vh"
+                customStyles={tableCustomStyles}
+                // selected={selectedRow}
+                // selectableRows
+                //pagination
+              ></DataTable>
+            </div>
+          )}
+          {allocateDabba && !noEmp && !tableState && (
+            <div className="allocateoptionbody">
+              <div className="allocateoption">
+                There are no allocated assets for this employee. Do you want to{" "}
+                <span>
+                  <a
+                    href="#"
+                    onClick={() => {
+                      // setAllocation(true);
 
+                      setTableState(false);
+                      allocation();
+                    }}
+                  >
+                    allocate
+                  </a>
+                </span>{" "}
+                an asset
+              </div>
+            </div>
+          )}
+          {!allocateDabba && noEmp && !tableState && (
+            <div className="allocateoptionbody">
+              <div className="allocateoption">There is no such employee</div>
+            </div>
+          )}
           <div className="buttons">
             <Stack spacing={2} direction="row"></Stack>
           </div>
         </div>
       ) : (
-        <div className="allocatebody">
+        <div className="deallocatebody">
           <Dialog
             open={dialogOpen}
             onClose={() => {
@@ -287,13 +390,28 @@ const Sbe = () => {
             </DialogActions>
           </Dialog>
           <div className="title">Asset Details</div>
-          {Object.entries(assetData).map(
+          {/* {Object.entries(assetData).map(
             ([key, value]) =>
               !["employeeId", "employeeName"].includes(key) &&
               value !== "" && (
                 <div key={key} className="display">
-                  <div className="keyfield" style={{ width: "170px" }}>
+                  <div className="keyfield" style={{ width: "200px" }}>
                     {key}:
+                  </div>{" "}
+                  <div className="valuefield">
+                    {stringifyNestedObjects(value)}
+                  </div>
+                </div>
+              )
+          )} */}
+          {Object.entries(assetData).map(
+            ([key, value]) =>
+              !["employee_id", "employee_name"].includes(key) &&
+              value !== null &&
+              value !== "" && (
+                <div key={key} className="display">
+                  <div className="keyfield" style={{ width: "200px" }}>
+                    {capitalizeFirstLetter(replaceUnderscoreWithSpace(key))}:
                   </div>{" "}
                   <div className="valuefield">
                     {stringifyNestedObjects(value)}
@@ -302,50 +420,36 @@ const Sbe = () => {
               )
           )}
           <Box component="form" onSubmit={handleSubmit(handleFormSubmit)}>
-            <div style={{display:"flex", flexDirection:"row", justifyContent:"space-around", alignItems:"center", marginBottom:"20px"}}>
-              
-              <TextField
-                label="Employee"
-                disabled
-                value={selectedRow.employeeName} // Set the default value here
-                InputLabelProps={{
-                  style: labelStyles,
-                }}
-                
-                {...register("employee")}
-                fullWidth
-                size="small"
-                sx={{
-                  "& .MuiInputBase-root": {
-                    height: "40px",
-                    width: "200px",
-                    marginBottom: "10px",
-                    marginTop: "25px",
-                  },
-                }}
-              >
-                {/* {employeeOptions} */}
-              </TextField>
-              
-              <TextField
-                label="Reason for Deallocation"
-                InputLabelProps={{
-                  style: labelStyles,
-                }}
-                {...register("reason")}
-                fullWidth
-                size="small"
-                sx={{
-                  "& .MuiInputBase-root": {
-                    height: "100px",
-                    width: "200px",
-                    marginBottom: "0px",
-                    marginTop: "10px",
-                  },
-                }}
-              >
-                {/* {employeeOptions} */}
-              </TextField>
+            <div className="input">
+              <div style={{ marginRight: "23%" }}>
+                <TextField
+                  label="Employee"
+                  disabled
+                  shrink
+                  value={selectedRow.employee_name} // Set the default value here
+                  InputLabelProps={{
+                    style: labelStyles,
+                  }}
+                  {...register("employee")}
+                  fullWidth
+                  size="small"
+                  sx={{
+                    "& .MuiInputBase-root": {
+                      height: "40px",
+                      width: "200px",
+                      marginBottom: "10px",
+                      marginTop: "25px",
+                    },
+                  }}
+                ></TextField>
+              </div>
+              <div>
+                <TextareaAutosize
+                  style={{ minHeight: "12%" }}
+                  {...register("reason")}
+                  placeholder="Reason for Deallocation"
+                />
+              </div>
             </div>
             <Button variant="outlined" type="submit" size="small">
               Deallocate Asset
@@ -357,3 +461,5 @@ const Sbe = () => {
   );
 };
 export default Sbe;
+
+//

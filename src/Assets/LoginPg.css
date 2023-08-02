@@ -1,0 +1,56 @@
+.bgContainer{
+    background-color: whitesmoke;
+    height: 100vh;
+    background-size: cover;
+    display: flex;
+    flex-direction: row;
+}
+
+.bg-Image-Container{
+    background-color: bisque;
+    background-image: url("../Assets/Images/Epm.jpg.jpeg");
+    background-size: cover;
+    width: 50%;
+}
+
+.text-container{
+    background-color: white;
+    text-align: center;
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.google-sign-in-btn{
+    background-color:white;
+    margin-top: 40px;
+    width: 300px;
+    height: 55px;
+    border: none;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    border-radius: 10px;
+    border-width: 0.5px;
+    border-style: solid;
+    border-color: rgb(186, 216, 243);
+}
+
+.google-icon{
+    height: 50px;
+    width: 50px;
+    
+}
+
+.google-sign-in-text{
+    color: black;
+    font-size: 16px;
+    /* font-weight: 600; */
+    margin-left: 20px;
+    line-height: 25px;
+    font-family: sans-serif;
+}

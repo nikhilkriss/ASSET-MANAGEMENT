@@ -22,139 +22,70 @@ import {
   DialogContentText,
   DialogActions,
 } from "@mui/material";
-
 const schema = yup.object().shape({
-  ram: yup //only numbers and accepts null
+  ram: yup //only numbers
     .string()
     .matches(/^(\d+|null)?$/),
-  memory: yup //only numbers and accepts null
+  memory: yup //only numbers
     .string()
     .matches(/^(\d+|null)?$/),
-  os_version: yup.string().matches(/^(null|[a-zA-Z0-9\s]*)$/), //only numbers, alphabets and space and accepts null
-  processor: yup
-    .string()
-    .matches(/^(null|[a-zA-Z0-9\s]*)$/), //only numbers, alphabets and space and accepts null
-  price: yup
-    .number()
-    .required("price is required"),
+  os_version: yup.string().matches(/^(null|[a-zA-Z0-9\s]*)$/), //only numbers, alphabets and space
+  processor: yup.string().matches(/^(null|[a-zA-Z0-9\s]*)$/), //only numbers, alphabets and space
   display_dimensions: yup.string().matches(/^(null|[a-zA-Z0-9\s]*)$/),
-  serial_number: yup //only numbers and accepts null
-    .number()
-    .required(),
-});
+  serial_number: yup.number().required("Serial Number is required"),
 
-const AddAsset = () => {
+  price: yup.number().required("price is required"),
+  
+});
+const EditAsset = ({ editingData, undoEdit }) => {
+  
+  console.log(editingData);
   const {
     register,
     handleSubmit,
     reset,
     control,
     watch,
-    setValue,
     formState: { errors },
+    resetField,
+    setValue,
   } = useForm({
     resolver: yupResolver(schema),
+    defaultValues: {
+      asset_name: editingData?.asset_name || "",
+      brand: editingData?.brand || "",
+      model: editingData?.model || "",
+      os: editingData?.os || "",
+      os_version: editingData?.os_version || "",
+      ram: editingData?.ram || "",
+      processor: editingData?.processor || "",
+      memory: editingData?.memory || "",
+      serial_number: editingData?.serial_number || "",
+      purchase_date: editingData?.purchase_date || "",
+      carepaq_expiry_status: editingData?.carepaq_expiry_status || "",
+      display_dimensions: editingData?.display_dimensions || "",
+      warranty_status: editingData?.warranty_status || "",
+      owned_by_proxima: editingData?.owned_by_proxima || "",
+      price: editingData?.price || "",
+    },
   });
 
-  const [addDialog, setAddDialog] = useState(false);
-  const [brandOptions, setBrandOptions] = useState([]);
-  const [modelOptions, setModelOptions] = useState([]);
-  const [osOptions, setOsOptions] = useState([]);
-  const [categoryState, setCategoryState] = useState("");
-  const [brandState, setBrandState] = useState("");
-  const [categoryId, setCategoryId] = useState(null);
+  const [editDialog, setEditDialog] = useState(false);
+  const [giveChance, setGiveChance] = useState(false);
 
-  let categoryValue = watch("asset_name");
-  let brandValue = watch("brand");
-
-  useEffect(() => {
-    if (categoryState === "Mouse") {
-      setValue("ram", "");
-      setValue("display_dimensions", "");
-      setValue("memory", "");
-      setValue("processor", "");
-      setValue("os", "");
-      setValue("os_version", "");
-    }
-  }, [categoryState]);
-  useEffect(() => {
-    if (categoryValue === "Laptop") {
-      setCategoryId(1);
-      setCategoryState("Laptop");
-      setBrandOptions(["Dell", "Lenovo", "HP"]);
-    } else if (categoryValue === "Macbook") {
-      setCategoryId(2);
-      setCategoryState("Macbook");
-      setBrandOptions(["Apple"]);
-    } else if (categoryValue === "Mouse") {
-      setCategoryId(3);
-      setCategoryState("Mouse");
-      setBrandOptions(["Logitech", "Dell", "Zebronics"]);
-    }
-    if (categoryValue === "Laptop" || categoryValue === "Macbook") {
-      setOsOptions(["windows", "macos", "linux", "chromeos"]);
-    }
-  }, [categoryValue]);
-  //
-  useEffect(() => {
-    if (categoryState === "Laptop" && brandValue === "HP") {
-      setModelOptions(["HP Model 1", "HP Model 2"]);
-      setBrandState("HP");
-    } else if (categoryState === "Laptop" && brandValue === "Dell") {
-      setModelOptions(["Dell Model 1", "Dell Model 2"]);
-    } else if (categoryState === "Laptop" && brandValue === "Lenovo") {
-      setModelOptions(["Lenovo Model 1", "Lenovo Model 2"]);
-    } else if (categoryState === "Macbook" && brandValue === "Apple") {
-      setModelOptions(["Macbook 1", "Macbook 2", "Macbook 3"]);
-    } else if (categoryState === "Mouse" && brandValue === "Dell") {
-      setModelOptions(["Dell Mouse 1", "Dell Mouse 2"]);
-    } else if (categoryState === "Mouse" && brandValue === "Logitech") {
-      setModelOptions(["Logitech Mouse 1", "Logitech Mouse 2"]);
-    } else if (categoryState === "Mouse" && brandValue === "Zebronics") {
-      setModelOptions(["Zebronics Mouse 1", "Zebronics Mouse 2"]);
-    }
-  }, [categoryState, brandValue]);
-  //mouse
-  let brandMenuOptions = brandOptions.map((item, index) => (
-    <MenuItem value={item} key={index}>
-      {item}
-    </MenuItem>
-  ));
-
-  let modelMenuOptions = modelOptions.map((item, index) => (
-    <MenuItem value={item} key={index}>
-      {item}
-    </MenuItem>
-  ));
-  let osMenuOptions = osOptions.map((item, index) => (
-    <MenuItem value={item} key={index}>
-      {item}
-    </MenuItem>
-  ));
-
-  const labelStyles = {
-    fontSize: "0.85em",
-  };
-  const selectLabelStyles = {
-    fontSize: "0.85em",
-  };
-  const checkLabelStyles = {
-    fontSize: "0.875rem",
-    fontWeight: 400,
-    color: "rgba(0, 0, 0, 0.6)",
-  };
-
-  const postData = async (formData) => {
+  console.log(editingData);
+  // console.log(editingData.owned_by_proxima);
+  const putData = async (formData) => {
     try {
-      formData.asset_category_id = categoryId;
-      formData.allocation_status = false;
-      
-      // console.log(formData);
-
+      formData.purchase_date = formData.purchase_date ? "" : null;
+      formData.carepaq_expiry_status = formData.carepaq_expiry_status
+        ? ""
+        : null;
+      formData.asset_id = editingData.asset_id;
+      formData.owned_by_proxima = editingData.owned_by_proxima ? true : false;
       const jsonString = JSON.stringify(formData);
-
       console.log(jsonString);
-      const response = await axios.post(
+      const response = await axios.put(
         config.API_ENDPOINT + "v1/Assets",
         jsonString,
         {
@@ -164,35 +95,55 @@ const AddAsset = () => {
         }
       );
       console.log(response);
-      setAddDialog(true);
-      reset();
+      setEditDialog(true);
     } catch (error) {
       console.log(error);
     }
   };
-
+  useEffect(() => {
+    if (editDialog) {
+      setGiveChance(true);
+    }
+  }, [editDialog]);
+  useEffect(() => {
+    if (!editDialog && giveChance) {
+      undoEdit();
+    }
+  }, [editDialog, giveChance]);
+  const labelStyles = {
+    fontSize: "0.86rem",
+  };
+  const checkLabelStyles = {
+    fontSize: "0.875rem",
+    fontWeight: 400,
+    color: "rgba(0, 0, 0, 0.6)",
+  };
   const handleFormSubmit = (formData) => {
     console.log(formData);
     console.log("success");
-    postData(formData);
+    putData(formData);
   };
   const handleClear = () => {
-    reset();
-    categoryValue = null;
-    brandValue = null;
-    setCategoryState(null);
-    setBrandState(null);
-    console.log(categoryValue);
+    // reset();
+    setValue("ram", "");
+    setValue("memory", "");
+    setValue("processor", "");
+    setValue("serial_number", "");
+    setValue("purchase_date", "");
+    setValue("carepaq_expiry_status", "");
+    setValue("warranty_status", "");
+    setValue("display_dimensions", "");
   };
-  //
+
   return (
     <div className="addAsset ">
-      <div className="addAssetTitle">Add Asset</div>
+      <div className="addAssetTitle">Edit Asset</div>
       {/*                                    basic */}
+
       <Dialog
-        open={addDialog}
+        open={editDialog}
         onClose={() => {
-          setAddDialog(false);
+          setEditDialog(false);
         }}
         aria-labelledby="dialog-title"
         aria-aria-describedby="dialog-description"
@@ -200,13 +151,13 @@ const AddAsset = () => {
         <DialogTitle id="dialog-title"></DialogTitle>
         <DialogContent>
           <DialogContentText id="dialog-description">
-            Asset added
+            Asset edited
           </DialogContentText>
         </DialogContent>
         <DialogActions>
           <Button
             onClick={() => {
-              setAddDialog(false);
+              setEditDialog(false);
             }}
           >
             OK
@@ -222,109 +173,70 @@ const AddAsset = () => {
                 display: "flex",
                 flexDirection: "row",
                 justifyContent: "space-around",
-                marginBottom: "13px",
+                marginBottom: "12px",
               }}
             >
               <Box>
-                <Controller
-                  name="asset_name"
-                  control={control}
-                  defaultValue=""
-                  render={({ field }) => (
-                    <FormControl fullWidth size="small" required>
-                      <InputLabel id="category-label" style={selectLabelStyles}>
-                        Category
-                      </InputLabel>
-                      <Select
-                        {...field}
-                        // InputLabelProps={{
-                        //   style: labelStyles,
-                        // }}
-                        style={{ height: "30px", width: "180px" }}
-                        label="Category"
-                      >
-                        <MenuItem value="Laptop" key="Laptop">
-                          Laptop
-                        </MenuItem>
-                        <MenuItem value="Macbook" key="Macbook">
-                          Macbook
-                        </MenuItem>
-                        <MenuItem value="Mouse" key="Mouse">
-                          Mouse
-                        </MenuItem>
-                      </Select>
-                    </FormControl>
-                  )}
-                />
-              </Box>
-              <Box>
-                {/* <TextField
-                  label="Brand"
-                  defaultValue=""
+                <TextField
+                  fullWidth
+                  disabled
+                  label="Category"
+                  {...register("asset_name")}
                   InputLabelProps={{
                     style: labelStyles,
                   }}
-                  select
-                  {...register("brand", { required: true })}
-                  fullWidth
+                  variant="outlined"
                   required
                   size="small"
+                  placeholder="Category..."
                   sx={{
                     "& .MuiInputBase-root": {
                       height: "30px",
                       width: "180px",
                     },
                   }}
-                >
-                  {brandMenuOptions}
-                </TextField> */}
-                <Controller
-                  name="brand"
-                  control={control}
-                  required
-                  defaultValue=""
-                  render={({ field }) => (
-                    <FormControl fullWidth size="small" required>
-                      <InputLabel id="category-label" style={selectLabelStyles}>
-                        Brand
-                      </InputLabel>
-                      <Select
-                        {...field}
-                        // InputLabelProps={{
-                        //   style: labelStyles,
-                        // }}
-                        style={{ height: "30px", width: "180px" }}
-                        label="Brand"
-                        // ...other props for the Select component
-                      >
-                        {/* options for the Select */}
-                        {brandMenuOptions}
-                      </Select>
-                    </FormControl>
-                  )}
                 />
               </Box>
               <Box>
-                <Controller
-                  name="model"
-                  control={control}
-                  defaultValue=""
-                  render={({ field }) => (
-                    <FormControl fullWidth size="small" required>
-                      <InputLabel id="category-label" style={selectLabelStyles}>
-                        Model
-                      </InputLabel>
-                      <Select
-                        {...field}
-                        // InputLabelProps={{
-                        //   style: labelStyles,
-                        // }}
-                        style={{ height: "30px", width: "180px" }}
-                      >
-                        {modelMenuOptions}
-                      </Select>
-                    </FormControl>
-                  )}
+                <TextField
+                  fullWidth
+                  disabled
+                  label="Brand"
+                  {...register("brand")}
+                  InputLabelProps={{
+                    style: labelStyles,
+                  }}
+                  variant="outlined"
+                  required
+                  size="small"
+                  placeholder="Brand..."
+                  sx={{
+                    "& .MuiInputBase-root": {
+                      height: "30px",
+                      width: "180px",
+                    },
+                  }}
+                />
+              </Box>
+              <Box>
+                <TextField
+                  fullWidth
+                  disabled
+                  label="Model"
+                  {...register("model")}
+                  InputLabelProps={{
+                    style: labelStyles,
+                  }}
+                  variant="outlined"
+                  required
+                  size="small"
+                  placeholder="Model..."
+                  sx={{
+                    "& .MuiInputBase-root": {
+                      height: "30px",
+                      width: "180px",
+                    },
+                  }}
                 />
               </Box>
             </div>
@@ -333,57 +245,22 @@ const AddAsset = () => {
                 display: "flex",
                 flexDirection: "row",
                 justifyContent: "space-around",
-                marginBottom: "7px",
+                marginBottom: "6px",
               }}
             >
               <Box>
-                <Controller
-                  name="os"
-                  control={control}
-                  defaultValue=""
-                  render={({ field }) => (
-                    <FormControl
-                      fullWidth
-                      size="small"
-                      required={categoryState !== "Mouse"}
-                    >
-                      <InputLabel
-                        id="category-label"
-                        disabled={categoryState === "Mouse"}
-                        style={selectLabelStyles}
-                      >
-                        OS
-                      </InputLabel>
-                      <Select
-                        {...field}
-                        // InputLabelProps={{
-                        //   style: labelStyles,
-                        // }}
-                        style={{ height: "30px", width: "180px" }}
-                        disabled={categoryState === "Mouse"}
-                        // ...other props for the Select component
-                      >
-                        {/* options for the Select */}
-                        {osMenuOptions}
-                      </Select>
-                    </FormControl>
-                  )}
-                />
-              </Box>
-              <Box>
                 <TextField
                   fullWidth
-                  label="OS Version"
-                  required={categoryState !== "Mouse"}
-                  disabled={categoryState === "Mouse"}
+                  disabled
+                  label="OS"
+                  {...register("os")}
                   InputLabelProps={{
                     style: labelStyles,
                   }}
                   variant="outlined"
+                  required
                   size="small"
-                  {...register("os_version")}
-                  placeholder={"OS Version..."}
-                  error={!!errors.display_dimensions}
+                  placeholder="Model..."
                   sx={{
                     "& .MuiInputBase-root": {
                       height: "30px",
@@ -395,6 +272,28 @@ const AddAsset = () => {
               <Box>
                 <TextField
                   fullWidth
+                  disabled
+                  label="OS Version"
+                  InputLabelProps={{
+                    style: labelStyles,
+                  }}
+                  variant="outlined"
+                  size="small"
+                  {...register("os_version")}
+                  placeholder={"OS Version..."}
+                  error={!!errors.os_version}
+                  sx={{
+                    "& .MuiInputBase-root": {
+                      height: "30px",
+                      width: "180px",
+                    },
+                  }}
+                />
+              </Box>
+              <Box>
+                <TextField
+                  fullWidth
+                  disabled
                   // label="Price &#8377"
                   label={<span>Price &#8377;</span>}
                   InputLabelProps={{
@@ -420,29 +319,14 @@ const AddAsset = () => {
                 flexDirection: "row",
                 justifyContent: "space-around",
               }}
-            ></div>
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "row",
-                justifyContent: "space-around",
-              }}
             >
               <Box width="180px">
                 <Controller
                   name="owned_by_proxima"
                   control={control}
-                  defaultValue={false}
                   render={({ field }) => (
                     <FormControlLabel
-                      control={
-                        <Checkbox
-                          {...field}
-                          onChange={(e) => field.onChange(e.target.checked)}
-                          checked={field.value}
-                          size="small"
-                        />
-                      }
+                      fullWidth
                       label={
                         <Typography
                           variant="subtitle2"
@@ -450,6 +334,14 @@ const AddAsset = () => {
                         >
                           Owned by Proxima
                         </Typography>
+                      }
+                      control={
+                        <Checkbox
+                          size="small"
+                          checked={field.value}
+                          onChange={field.onChange}
+                          disabled
+                        />
                       }
                     />
                   )}
@@ -468,22 +360,23 @@ const AddAsset = () => {
               style={{
                 display: "flex",
                 flexDirection: "row",
+                // marginBottom: "12px",
+                marginTop: "",
                 justifyContent: "space-around",
               }}
             >
               <Box width="180px">
                 <TextField
                   fullWidth
-                  required={categoryState !== "Mouse"}
-                  disabled={categoryState === "Mouse"}
                   label="RAM(gb)"
+                  disabled={editingData?.asset_name === "Mouse"}
                   {...register("ram")}
                   InputLabelProps={{
                     style: labelStyles,
                   }}
                   error={!!errors.ram}
                   variant="outlined"
-                  // required
+                  required
                   size="small"
                   placeholder="RAM"
                   sx={{
@@ -498,15 +391,14 @@ const AddAsset = () => {
                 <TextField
                   fullWidth
                   label="Hard Disk Memory(gb)"
-                  required={categoryState !== "Mouse"}
-                  disabled={categoryState === "Mouse"}
+                  disabled={editingData?.asset_name === "Mouse"}
                   {...register("memory")}
                   InputLabelProps={{
                     style: labelStyles,
                   }}
                   variant="outlined"
-                  // required
-                  error={!!errors.memory}
+                  required
+                  error={!!errors.hdm}
                   size="small"
                   placeholder="Hard Disk Memory..."
                   sx={{
@@ -521,15 +413,15 @@ const AddAsset = () => {
                 <TextField
                   // value={text}
                   fullWidth
-                  disabled={categoryState === "Mouse"}
                   label="Processor"
-                  required={categoryState !== "Mouse"}
+                  disabled={editingData?.asset_name === "Mouse"}
                   {...register("processor")}
                   InputLabelProps={{
                     style: labelStyles,
                   }}
                   error={!!errors.processor}
                   variant="outlined"
+                  required
                   size="small"
                   placeholder="Processor..."
                   sx={{
@@ -549,28 +441,28 @@ const AddAsset = () => {
                 justifyContent: "space-around",
               }}
             >
-              <Box width="180px" style={{marginTop:"1.5%"}}>
+              <Box width="180px" style={{ marginTop: "1.5%" }}>
                 <TextField
                   fullWidth
-                  required
                   label="Serial Number"
                   {...register("serial_number")}
                   InputLabelProps={{
                     style: labelStyles,
                   }}
-                  error={!!errors.serial_number}
+                  error={!!errors.serial_number} //same as processor
                   variant="outlined"
+                  required
                   size="small"
                   placeholder="Serial Number..."
                   sx={{
                     "& .MuiInputBase-root": {
                       height: "30px",
                       width: "180px",
-                      
                     },
                   }}
                 />
               </Box>
+
               <Box width="180px">
                 <Controller
                   name="purchase_date"
@@ -588,7 +480,14 @@ const AddAsset = () => {
                           },
                         }}
                         label={
-                          <div style={{fontSize:"14px",fontWeight:"400", position:"relative", top:"5px"}}>
+                          <div
+                            style={{
+                              fontSize: "14px",
+                              fontWeight: "400",
+                              position: "relative",
+                              top: "5px",
+                            }}
+                          >
                             Purchase Date
                           </div>
                         }
@@ -613,6 +512,7 @@ const AddAsset = () => {
                   )}
                 />
               </Box>
+
               <Box width="180px">
                 <Controller
                   name="carepaq_expiry_status"
@@ -630,15 +530,18 @@ const AddAsset = () => {
                           },
                         }}
                         label={
-                          <div style={{fontSize:"14px",fontWeight:"400", position:"relative", top:"5px"}}>
+                          <div
+                            style={{
+                              fontSize: "14px",
+                              fontWeight: "400",
+                              position: "relative",
+                              top: "5px",
+                            }}
+                          >
                             CarePaqExp Date
                           </div>
                         }
-                        renderInput={(params) => (
-                          <TextField
-                            {...params}
-                          />
-                        )}
+                        renderInput={(params) => <TextField {...params} />}
                         value={field.value ? new Date(field.value) : null}
                         onChange={(date) => {
                           field.onChange(
@@ -651,7 +554,6 @@ const AddAsset = () => {
                 />
               </Box>
             </div>
-            
             <div
               style={{
                 display: "flex",
@@ -662,11 +564,14 @@ const AddAsset = () => {
               <Box width="180px">
                 <Controller
                   name="warranty_status"
+                  defaultValue="within warranty"
                   control={control}
-                  defaultValue=""
                   render={({ field }) => (
                     <FormControl fullWidth size="small">
-                      <InputLabel id="category-label" style={selectLabelStyles}>
+                      <InputLabel
+                        id="category-label"
+                        style={{ fontSize: "0.87em" }}
+                      >
                         Warranty Status
                       </InputLabel>
                       <Select
@@ -676,12 +581,10 @@ const AddAsset = () => {
                         }}
                         style={{ height: "30px", width: "180px" }}
                       >
-                        <MenuItem value="within warranty" key="Within Warranty">
+                        <MenuItem value="within warranty">
                           Within Warranty
                         </MenuItem>
-                        <MenuItem value="expired" key="expired">
-                          Expired
-                        </MenuItem>
+                        <MenuItem value="expired">Expired</MenuItem>
                       </Select>
                     </FormControl>
                   )}
@@ -689,15 +592,16 @@ const AddAsset = () => {
               </Box>
               <Box width="180px">
                 <TextField
-                  disabled={categoryState === "Mouse"}
+                  // value={text}
                   fullWidth
                   label="Display Dimensions"
+                  disabled={editingData?.asset_name === "Mouse"}
                   {...register("display_dimensions")}
                   InputLabelProps={{
                     style: labelStyles,
                   }}
                   variant="outlined"
-                  error={!!errors.display_dimensions}
+                  error={!!errors.display_dimensions} //same as processor
                   size="small"
                   placeholder="Display Dimensions"
                   sx={{
@@ -718,7 +622,7 @@ const AddAsset = () => {
               Clear
             </Button>
             <Button variant="contained" type="submit" size="small">
-              Add Asset
+              Edit Asset
             </Button>
           </Stack>
         </div>
@@ -726,5 +630,4 @@ const AddAsset = () => {
     </div>
   );
 };
-export default AddAsset;
-
+export default EditAsset;

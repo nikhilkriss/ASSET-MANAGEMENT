@@ -25,7 +25,6 @@
     color: hwb(0 0% 0% / 0.745);
 } */
 .buttons{
-    
     width: 100%;
     display: flex;
     flex-direction: row;
@@ -52,14 +51,27 @@
 .searchbtn{
     height: 30px
 }
-.allocatebody{
+.deallocatebody{
     margin-top: 10px;
     height:fit-content;
     background-color:aliceblue;
 }
 .input{
-    
+    height:20vh;
     display: flex;
-    flex-direction: row;
     justify-content:flex-start;
+    align-items: center;
 }
+.allocateoption{
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    
+    /* align-items:"center" */
+}
+.allocateoptionbody{
+    box-shadow: 0 0 0 1px black;
+    background-color: white;
+    height:60px;
+    border-radius: 7px;
+    align-content: center;
+}
+

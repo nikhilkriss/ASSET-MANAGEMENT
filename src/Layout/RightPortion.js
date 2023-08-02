@@ -1,68 +1,93 @@
 import React, { useState, useEffect } from "react";
 import "../Assets/RightPortion.css";
-import axios from "axios";
-// import { Button, Stack } from "@mui/material";
 import AddAsset from "./AddAsset";
+import EditAsset from "./EditAsset";
 import AllocateAsset from "./AllocateAsset";
 import Eaa from "./Eaa";
 import Sbe from "./Sbe";
+import Sbc from "./Sbc";
 
 function RightPortion(props) {
   const [toggle, setToggle] = useState(true);
 
-  // const [addAssetState, setAddAssetState]=useState(props.page.addAsset);
-  
-  // console.log(props.page.page.addAsset);
-  
-  const[editMode, setEditMode]=useState(false);
-  const [editData, setEditData]=useState("");
-  const [editId, setEditId]=useState(null);
-  
-  const getEditingData = async () => {         //prepolation for edit asset
-    try {
-      const response = await axios.get(
-        `https://jsonplaceholder.typicode.com/users/${editId}`
-      );
-      setEditData(response.data);
-      console.log(response.data);
-    } catch (error) {
-      console.log(error);
-    }
+  const [editData, setEditData] = useState(null);
+  const [sbeId, setSbeId] = useState(null);
+  const [sbeName, setSbeName] = useState(null);
+  const [sbeMode, setSbeMode] = useState(false);
+  const [sbeAux, setSbeAux] = useState(false);
+  const [change, setChange] = useState(false);
+  const editHandler = (data) => {
+    console.log(data);
+    setEditData(data);
+    setChange(false);
+    props.page.page.editAsset = true;
+    props.page.page.allocateAsset = false;
   };
-  useEffect(()=>{if(editId){getEditingData();}},[editId])
-  useEffect(()=>{setEditMode(true);},[editData]);
-  const editHandler = (id) => {
-    console.log(id);
-    setEditId(id);
-    
-    props.page.page.addAsset=false;
-    props.page.page.allocateAsset=false;
-    console.log(props.page.page.allocateAsset);
-    
+  const undoEdit = () => {
+    console.log("asdfghjkl");
+    props.page.page.editAsset = false;
+    props.page.page.allocateAsset = true;
+    setChange(true);
   };
-  const undoEdit=()=>{
-    setEditMode(false);
-    props.page.page.allocateAsset=true;
-    
-  }
   useEffect(() => {
     setToggle(false);
-    setEditMode(false);
-  }, [props.page]);
+    console.log(sbeId);
+    try {
+      if (props.page.page.allocateAsset === false) {
+        console.log("marindi");
+        setSbeId(null);
+        setSbeName(null);
+        setSbeMode(false);
+        setChange(false);
+      }
+    } catch (error) {}
+  }, [props.page.page]);
+
+  useEffect(() => {
+    if (sbeId) {
+      setSbeMode(true);
+    }
+  }, [sbeId, sbeAux]);
+
+  const sbeAllocation = (id, name) => {
+    console.log(id);
+    setSbeId(id);
+    setSbeName(name);
+    setSbeAux(!sbeAux);
+
+    props.page.page.allocateAsset = true;
+    props.page.page.sbe = false;
+  };
   return (
     <div className="right">
       <div className="right-portion">
         {/* <div className="welcome-text">Welcome to Asset Management</div> */}
 
-        {(toggle || props.page.page.addAsset) && <AddAsset editingData={editData} editingMode={editMode} undoEdit={undoEdit}/>}
-        {(toggle || props.page.page.allocateAsset) && (
-          <AllocateAsset  editHandler={editHandler} />
+        {(toggle || props.page.page.addAsset) && <AddAsset />}
+        {(toggle || props.page.page.allocateAsset || sbeMode || change) && (
+          <AllocateAsset
+            editHandler={editHandler}
+            sbe={sbeId}
+            sbeName={sbeName}
+          />
         )}
-        {(toggle|| editMode)&&<AddAsset editingData={editData} editingMode={editMode} undoEdit={undoEdit}/>}
-        {(toggle||props.page.page.eaa)&&<Eaa/>}
-        {(toggle||props.page.page.sbe)&&<Sbe/>}
+        {(toggle || (props.page.page.editAsset && !change)) && (
+          <EditAsset editingData={editData} undoEdit={undoEdit} />
+        )}
+        {(toggle || (props.page.page.eaa && !sbeMode)) && <Eaa />}
+        {(toggle || (props.page.page.sbe && !sbeMode)) && (
+          <Sbe sbeAllocation={sbeAllocation} />
+        )}
+        {(toggle || (props.page.page.sbc && !sbeMode)) && <Sbc />}
       </div>
-      <footer className="footer"></footer>
+      <footer className="footer">
+        <div className="footer-section">
+          <h3 style={{ fontSize: "18px", fontWeight: "500", color:"black" }}>
+            © Copyrights 2023<span style={{ color: "orange" }}> ProximaBiz</span>{" "}
+            All rights Reserved
+          </h3>
+        </div>
+      </footer>
     </div>
   );
 }

@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import "../Assets/Eaa.css";
 import DataTable from "react-data-table-component";
-import employeeDetails from "./Eaa.json";
+import config from "../config";
+import axios from "axios";
 
 const tableCustomStyles = {
   title: {
@@ -29,75 +30,93 @@ const tableCustomStyles = {
 };
 const Eaa = () => {
   const [data, setData] = useState([]);
-  const getEmployeeData = () => {
-    //api call
-    setData(employeeDetails);
+  const getData = async () => {
+    try {
+      await axios
+        .get(config.API_ENDPOINT + `v1/AssetAllocation`)
+        .then((response) => {
+          console.log(response);
+          setData(response.data);
+        });
+    } catch (error) {
+      console.log(error);
+    }
+    // setData(employeeDetails);
   };
   useEffect(() => {
-    getEmployeeData();
+    getData();
   }, []);
   const columns = [
     {
       name: "Employee Id",
-      selector: (row) => row.employeeid,
+      selector: (row) => row.employee_id,
+      width: "11%"
     },
     {
       name: "Employee Name",
-      selector: (row) => row.employeename,
+      selector: (row) => row.employee_name,
+      width: "14%"
+    },
+    {
+      name: "Asset Id",
+      selector: (row) => row.asset_id,
+      width: "8%"
     },
     {
       name: "Category",
-      selector: (row) => row.category,
+      selector: (row) => row.category_name,
+      // width: "11%"
     },
     {
       name: "Brand",
       selector: (row) => row.brand,
+      width: "10%"
     },
     {
       name: "Configuration",
-      selector: (row) => row.id,
-
-      // cell: (row) => (
-      //   <div style={{display:"flex", flexDirection:"column"}}>
-      //     {row.OS}, {row.ram}, {row.Memory}, {row.processor}, {row.serialnumber}
-      //   </div>
-      // ),
       cell: (row) => (
-        <div >
-          <span>{row.OS}, </span>
-          <span>{row.ram}, </span>
-          <span>{row.Memory}, </span>
+        <div>
+          <span>{row.os}, </span>
+          <span><span>Ram:</span> {row.ram}<span>gb,</span></span>
+          <span><span>Memory:</span>{row.memory}<span>gb,</span> </span>
           <span>{row.processor}, </span>
-          <span>{row.serialnumber}</span>
+          <span>{row.serial_number}</span>
         </div>
       ),
+      width: "15%"
     },
     {
       name: "CarePaqExpStatus",
       selector: (row) => row.id,
       cell: (row) => <div>{row.carepaqexpstatus ? "Yes" : "No"}</div>,
+      width: "15%"  //
     },
     {
       name: "Warranty Status",
       selector: (row) => row.id,
-      cell: (row) => <div>{row.warrantystatus}</div>,
+      cell: (row) => <div>{row.warranty_status}</div>,
+      width: "13%"  //
     },
     {
-      name: "owned By Proxima",
+      name: "Owned By Proxima",
       selector: (row) => row.id,
-      cell: (row) => <div>{row.ownedbyproxima ? "Yes" : "No"}</div>,
+      cell: (row) => <div>{row.owned_by_proxima ? "Yes" : "No"}</div>,
+      width: "15%"   //
     },
   ];
 
   return (
     <div className="eaaBody">
       <DataTable
-        title="Asset Details"
+        title="Allocated Assets"
         columns={columns}
         fixedHeader
-        fixedHeaderScrollHeight="450px"
+        fixedHeaderScrollHeight="61vh"
         data={data}
         customStyles={tableCustomStyles}
+        pagination
+        className="customDataTable"
+        
       />
     </div>
   );

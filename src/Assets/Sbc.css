@@ -1,0 +1,68 @@
+.sbcbody{
+    /* background-color:white; */
+    width: 95%;
+    height:69vh;
+    
+}
+.searchByEmployeeHeading{
+    color: rgba(0, 0, 0, 0.705);
+    font-size: 22px;
+    font-weight: 500;
+    font-family: Arial, Helvetica, sans-serif;
+}
+.sbc{
+    /* background-color: white; */
+    width: 100%;
+    height:100%;
+    border-radius: 8px;
+
+}
+.row{
+    display:flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin-top: 7px;
+}
+.lastrow{
+    display: flex;
+    justify-content: space-between;
+    /* justify-content: flex-start; */
+    margin-top: 14px;
+    margin-bottom: 10px;
+}
+.warning{
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: red;
+}
+.allocatebody{
+    width:95%;
+    /* height:10%; */
+    background-color: white;
+    border-radius: 9px;
+    /* padding: 20px; */
+    /* margin-bottom: 10px; */
+    margin-top: 0px;
+}
+.display{
+    display: flex;
+    flex-direction: row;
+    align-items:end;
+}
+.keyfield{
+    font-size: larger;
+    font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+.valuefield{
+    font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+}
+.title{
+    font-size: 25px;
+    text-align: center;
+    font-family: Georgia, 'Times New Roman', Times, serif;
+}
+.input{
+    height:20vh;
+    display: flex;
+    justify-content:flex-start;
+    align-items: center;
+}

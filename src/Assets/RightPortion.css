@@ -1,5 +1,5 @@
 .right{
-    width:83%;
+    width:90%;
     /* height:90vh; */
     /* height:auto; */
     display:flex;
@@ -35,13 +35,18 @@
   }
   
   .footer {
-    position:static;
-    height: 13%;
+    /* position:static; */
+    height: 10vh;
     width: 100%;
     background-color:rgb(190, 182, 182);
+    
     color: white;
     display: flex;
     justify-content: center;
     align-items: center;
   }
-  
+  /* .alignment{
+    display: flex;
+    flex-direction: column;
+
+  } */

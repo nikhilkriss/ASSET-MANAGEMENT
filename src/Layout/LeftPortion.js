@@ -8,6 +8,7 @@ function LeftPortion({ displayPage }) {
   const [page, setPage] = useState({
     addAsset: true,
     allocateAsset: false,
+    editAsset:false,
     eaa: false,
     sbe: false,
     sbs: false,
@@ -31,7 +32,7 @@ function LeftPortion({ displayPage }) {
       allocateAsset: false,
       eaa: false,
       sbe: false,
-      sbs: false,
+      sbc: false,
     });
   };
   
@@ -41,7 +42,7 @@ function LeftPortion({ displayPage }) {
       allocateAsset: true,
       eaa: false,
       sbe: false,
-      sbs: false
+      sbc: false
     });
   };
   const handleEaa=()=>{
@@ -50,7 +51,7 @@ function LeftPortion({ displayPage }) {
       allocateAsset: false,
       eaa: true,
       sbe: false,
-      sbs: false
+      sbc: false
     })
   };
   const handleSbe=()=>{
@@ -59,7 +60,7 @@ function LeftPortion({ displayPage }) {
       allocateAsset: false,
       eaa: false,
       sbe: true,
-      sbs: false
+      sbc: false
     })
   };
   const handleSbs=()=>{
@@ -68,7 +69,7 @@ function LeftPortion({ displayPage }) {
       allocateAsset: false,
       eaa: false,
       sbe: false,
-      sbs: true
+      sbc: true
     });
   };
   return (
@@ -96,7 +97,7 @@ function LeftPortion({ displayPage }) {
           <div className="submenu">
             <div className="submenu-item" onClick={handleEaa}>Employee Asset Allocation</div>
             <div className="submenu-item" onClick={handleSbe}>Search By Employee</div>
-            <div className="submenu-item" onClick={handleSbs}>Search By Specification</div>
+            <div className="submenu-item" onClick={handleSbs}>Search By Configuration</div>
           </div>
         )}
       </div>

@@ -1,9 +1,10 @@
 .allocatebody{
-    width:100;
-    height:100%;
+    width:95%;
+    /* height:10%; */
     background-color: white;
     border-radius: 9px;
     padding: 20px;
+    /* margin-bottom: 10px; */
 }
 .display{
     display: flex;
@@ -23,6 +24,8 @@
     font-family: Georgia, 'Times New Roman', Times, serif;
 }
 .input{
-    display:flex;
-    
+    height:20vh;
+    display: flex;
+    justify-content:flex-start;
+    align-items: center;
 }
