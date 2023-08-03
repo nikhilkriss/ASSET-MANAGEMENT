@@ -9,7 +9,6 @@ import Sbc from "./Sbc";
 
 function RightPortion(props) {
   const [toggle, setToggle] = useState(true);
-
   const [editData, setEditData] = useState(null);
   const [sbeId, setSbeId] = useState(null);
   const [sbeName, setSbeName] = useState(null);
@@ -54,16 +53,18 @@ function RightPortion(props) {
     setSbeId(id);
     setSbeName(name);
     setSbeAux(!sbeAux);
-
     props.page.page.allocateAsset = true;
     props.page.page.sbe = false;
   };
   return (
     <div className="right">
       <div className="right-portion">
-        {/* <div className="welcome-text">Welcome to Asset Management</div> */}
-
         {(toggle || props.page.page.addAsset) && <AddAsset />}
+        {(toggle || props.page.page.welcome) && (
+          <div className="welcome">
+            <div className="welcome-text">Welcome to Asset Management</div>
+          </div>
+        )}
         {(toggle || props.page.page.allocateAsset || sbeMode || change) && (
           <AllocateAsset
             editHandler={editHandler}
@@ -82,9 +83,10 @@ function RightPortion(props) {
       </div>
       <footer className="footer">
         <div className="footer-section">
-          <h3 style={{ fontSize: "18px", fontWeight: "500", color:"black" }}>
-            © Copyrights 2023<span style={{ color: "orange" }}> ProximaBiz</span>{" "}
-            All rights Reserved
+          <h3 style={{ fontSize: "15px", fontWeight: "500", color: "black" }}>
+            © Copyrights 2023
+            <span style={{ color: "orange" }}> ProximaBiz</span> All rights
+            Reserved
           </h3>
         </div>
       </footer>

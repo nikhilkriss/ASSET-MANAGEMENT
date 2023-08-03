@@ -77,9 +77,9 @@ const EditAsset = ({ editingData, undoEdit }) => {
   // console.log(editingData.owned_by_proxima);
   const putData = async (formData) => {
     try {
-      formData.purchase_date = formData.purchase_date ? "" : null;
+      formData.purchase_date = formData.purchase_date ? formData.purchase_date : null;
       formData.carepaq_expiry_status = formData.carepaq_expiry_status
-        ? ""
+        ? formData.carepaq_expiry_status
         : null;
       formData.asset_id = editingData.asset_id;
       formData.owned_by_proxima = editingData.owned_by_proxima ? true : false;

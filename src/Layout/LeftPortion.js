@@ -6,7 +6,8 @@ function LeftPortion({ displayPage }) {
   const [showReportsSubMenu, setShowReportsSubMenu] = useState(false);
 
   const [page, setPage] = useState({
-    addAsset: true,
+    welcome:true,
+    addAsset: false,
     allocateAsset: false,
     editAsset:false,
     eaa: false,
@@ -29,6 +30,7 @@ function LeftPortion({ displayPage }) {
   const handleAddAsset = () => {
     setPage({
       addAsset: true,
+      welcome:false,
       allocateAsset: false,
       eaa: false,
       sbe: false,
@@ -38,6 +40,7 @@ function LeftPortion({ displayPage }) {
   
   const handleaAllocateAsset = () => {
     setPage({
+      welcome:false,
       addAsset: false,
       allocateAsset: true,
       eaa: false,
@@ -48,6 +51,7 @@ function LeftPortion({ displayPage }) {
   const handleEaa=()=>{
     setPage({
       addAsset: false,
+      welcome:false,
       allocateAsset: false,
       eaa: true,
       sbe: false,
@@ -57,6 +61,7 @@ function LeftPortion({ displayPage }) {
   const handleSbe=()=>{
     setPage({
       addAsset: false,
+      welcome:false,
       allocateAsset: false,
       eaa: false,
       sbe: true,
@@ -66,6 +71,7 @@ function LeftPortion({ displayPage }) {
   const handleSbs=()=>{
     setPage({
       addAsset: false,
+      welcome:false,
       allocateAsset: false,
       eaa: false,
       sbe: false,
@@ -104,5 +110,5 @@ function LeftPortion({ displayPage }) {
     </div>
   );
 }
-
+//sbs
 export default LeftPortion;

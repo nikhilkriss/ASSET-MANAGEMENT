@@ -19,9 +19,7 @@ import {
 } from "@mui/material";
 import { useForm } from "react-hook-form";
 import DataTable from "react-data-table-component";
-// import employeeDetails from "./employeeDetails.json";
-// import AssetDetails from "./AssetDetails.json";
-//id
+
 const tableCustomStyles = {
   headCells: {
     style: {
@@ -67,21 +65,21 @@ const Sbc = () => {
       console.log(selectedRow);
     }
   }, [selectedRow]);
-  
+
   const capitalizeFirstLetter = (str) => {
     return str.replace(/\b\w/g, (match) => match.toUpperCase());
   };
+
   const replaceUnderscoreWithSpace = (str) => {
     return str.replace(/_/g, " ");
   };
+
   const stringifyNestedObjects = (value) => {
     if (typeof value === "object" && value !== null) {
       return Object.entries(value)
         .map(([key, val]) => {
-          if (val === null || val === "") {
-            return null;
-          } else if (typeof val === "boolean") {
-            return `${replaceUnderscoreWithSpace(key)}: ${val ? "Yes" : "No"}`;
+          if (typeof val === "string") {
+            return `${replaceUnderscoreWithSpace(key)}: ${val}`;
           } else {
             return `${replaceUnderscoreWithSpace(key)}: ${val}`;
           }
@@ -91,13 +89,15 @@ const Sbc = () => {
     }
     return value;
   };
-  //   useEffect(()=>{setTableData({info}); console.log(info)},[])
+
   const postAllocation = async (formData) => {
     console.log(formData.employee_id);
     try {
-       await axios.post(
+      await axios.post(
         config.API_ENDPOINT +
-          `v1/AssetAllocation/${assetData.asset_id}/${formData.employee_id}${formData.reason?`/${formData.reason}`:''}`
+          `v1/AssetAllocation/${assetData.asset_id}/${formData.employee_id}${
+            formData.reason ? `/${formData.reason}` : ""
+          }`
       );
       // console.log(response);
       setDialogOpen(true);
@@ -114,7 +114,7 @@ const Sbc = () => {
       memory: formData.memory,
       processor: formData.processor,
     };
-    
+
     try {
       console.log(formData);
       await axios
@@ -125,10 +125,9 @@ const Sbc = () => {
           console.log(response);
           if (response.data.assets.length === 0) {
             setTableState(false);
-            
-          }else{
+          } else {
             setTableState(true);
-          setAssetTable(response.data.assets);
+            setAssetTable(response.data.assets);
           }
           setChance(true);
         });
@@ -159,11 +158,10 @@ const Sbc = () => {
   };
   const getEmployeeData = async () => {
     try {
-      console.log("ayyaa");
       const response = await axios.get(
-        config.API_ENDPOINT2+"/v1/EmployeeProfiles"
+        config.API_ENDPOINT2 + "v1/EmployeeProfiles"
       );
-      const data = response.data;
+      const data = response.data.employees;
       console.log(data);
       setEmployeeProfiles(data);
     } catch (error) {
@@ -203,7 +201,7 @@ const Sbc = () => {
         </a>
       ),
     },
-    
+
     {
       name: "Brand",
       selector: (row) => row.brand,
@@ -348,15 +346,11 @@ const Sbc = () => {
             <div>
               {tableState && chance && (
                 <DataTable
-                  //title="Employee Details"
                   columns={columns}
                   data={assetTable}
                   fixedHeader
                   fixedHeaderScrollHeight="45vh"
                   customStyles={tableCustomStyles}
-                  // selected={selectedRow}
-                  // selectableRows
-                  // pagination
                 ></DataTable>
               )}
               {!tableState && chance && (
@@ -394,20 +388,33 @@ const Sbc = () => {
             </Dialog>
             <div className="title">Asset Details</div>
             {Object.entries(assetData).map(
-            ([key, value]) =>
-              !["employee_id", "employee_name", "allocation_status", "is_active", "reason_for_allocation"].includes(key) &&
-              value !== null &&
-              value !== "" && (
-                <div key={key} className="display">
-                  <div className="keyfield" style={{ width: "200px" }}>
-                    {capitalizeFirstLetter(replaceUnderscoreWithSpace(key))}:
-                  </div>{" "}
-                  <div className="valuefield">
-                    {stringifyNestedObjects(value)}
+              ([key, value]) =>
+                ![
+                  "employee_id",
+                  "employee_name",
+                  "allocation_status",
+                  "is_active",
+                  "reason_for_allocation",
+                  "allocation_date",
+                ].includes(key) &&
+                value !== null &&
+                value !== "" && (
+                  <div key={key} className="display">
+                    <div className="keyfield" style={{ width: "200px" }}>
+                      {capitalizeFirstLetter(replaceUnderscoreWithSpace(key))}:
+                    </div>
+                    {!(typeof value === "boolean") ? (
+                      <div className="valuefield">
+                        {stringifyNestedObjects(value)}
+                      </div>
+                    ) : (
+                      <div className="valuefield">{`${
+                        value ? "Yes" : "No"
+                      }`}</div>
+                    )}
                   </div>
-                </div>
-              )
-          )}
+                )
+            )}
             <Box component="form" onSubmit={handleSubmit(handleAllocateSubmit)}>
               <div className="input">
                 <div style={{ marginRight: "23%" }}>

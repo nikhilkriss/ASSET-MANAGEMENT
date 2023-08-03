@@ -3,15 +3,19 @@ import "../Assets/Header.css";
 import ProximaLogo from "../Assets/Images/ProximaLogo.png";
 import ProfileIcon from "../Assets/Images/ProfileIcon.png";
 
-function Header({value}){
+function Header({value, click}){
   const logoutHandler=()=>{
     localStorage.clear();
     window.location.reload();
   }
+  const handleClick=()=>{
+    console.log("clicked");
+    click();
+  }
     return(
     <header className="header">
-        <div className="logo">
-          <img src={ProximaLogo} width="250px" height="55px" alt="Proxima Logo" />
+        <div className="logo" style={{cursor:"pointer"}}>
+          <img src={ProximaLogo} onClick={handleClick}  width="250px" height="55px" alt="Proxima Logo" />
         </div>
         <div className="dropdown">
           <div className="dropbtn">

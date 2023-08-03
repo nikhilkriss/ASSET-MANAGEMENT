@@ -237,9 +237,6 @@ const AddAsset = () => {
                       </InputLabel>
                       <Select
                         {...field}
-                        // InputLabelProps={{
-                        //   style: labelStyles,
-                        // }}
                         style={{ height: "30px", width: "180px" }}
                         label="Category"
                       >
@@ -258,26 +255,6 @@ const AddAsset = () => {
                 />
               </Box>
               <Box>
-                {/* <TextField
-                  label="Brand"
-                  defaultValue=""
-                  InputLabelProps={{
-                    style: labelStyles,
-                  }}
-                  select
-                  {...register("brand", { required: true })}
-                  fullWidth
-                  required
-                  size="small"
-                  sx={{
-                    "& .MuiInputBase-root": {
-                      height: "30px",
-                      width: "180px",
-                    },
-                  }}
-                >
-                  {brandMenuOptions}
-                </TextField> */}
                 <Controller
                   name="brand"
                   control={control}
@@ -290,14 +267,9 @@ const AddAsset = () => {
                       </InputLabel>
                       <Select
                         {...field}
-                        // InputLabelProps={{
-                        //   style: labelStyles,
-                        // }}
                         style={{ height: "30px", width: "180px" }}
                         label="Brand"
-                        // ...other props for the Select component
                       >
-                        {/* options for the Select */}
                         {brandMenuOptions}
                       </Select>
                     </FormControl>
@@ -316,9 +288,6 @@ const AddAsset = () => {
                       </InputLabel>
                       <Select
                         {...field}
-                        // InputLabelProps={{
-                        //   style: labelStyles,
-                        // }}
                         style={{ height: "30px", width: "180px" }}
                       >
                         {modelMenuOptions}
@@ -356,14 +325,9 @@ const AddAsset = () => {
                       </InputLabel>
                       <Select
                         {...field}
-                        // InputLabelProps={{
-                        //   style: labelStyles,
-                        // }}
                         style={{ height: "30px", width: "180px" }}
                         disabled={categoryState === "Mouse"}
-                        // ...other props for the Select component
                       >
-                        {/* options for the Select */}
                         {osMenuOptions}
                       </Select>
                     </FormControl>
@@ -395,7 +359,6 @@ const AddAsset = () => {
               <Box>
                 <TextField
                   fullWidth
-                  // label="Price &#8377"
                   label={<span>Price &#8377;</span>}
                   InputLabelProps={{
                     style: labelStyles,

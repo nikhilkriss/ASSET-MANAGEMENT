@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import "../Assets/Sbe.css";
 import {
   FormControl,
-  MenuItem,
   Stack,
   TextField,
   TextareaAutosize,
@@ -108,7 +107,6 @@ const Sbe = ({ sbeAllocation }) => {
             setPassingId(res.data.employees[0].employee_id);
             setPassingName(res.data.employees[0].employee_name);
             console.log(noEmp);
-            // console.log(config.API_ENDPOINT +`v1/AssetAllocation/${employeeName}/${employeeName}`)
             axios
               .get(
                 config.API_ENDPOINT +
@@ -222,22 +220,7 @@ const Sbe = ({ sbeAllocation }) => {
   const handleFormSubmit = (formData) => {
     postDeallocation(formData);
   };
-  // const stringifyNestedObjects = (value) => {
-  //   if (typeof value === "object" && value !== null) {
-  //     return Object.entries(value)
-  //       .map(([key, val]) => {
-  //         if (typeof val === "boolean") {
-  //           return `${key}: ${val ? "Yes" : "No"}`;
-  //         } else if (val !== null && val !== "" && val !== undefined) {
-  //           return `${key}: ${val}`;
-  //         }
-  //         return null;
-  //       })
-  //       .filter((item) => item !== null)
-  //       .join(", ");
-  //   }
-  //   return value;
-  // };
+  
   const capitalizeFirstLetter = (str) => {
     return str.replace(/\b\w/g, (match) => match.toUpperCase());
   };
@@ -250,10 +233,8 @@ const Sbe = ({ sbeAllocation }) => {
     if (typeof value === "object" && value !== null) {
       return Object.entries(value)
         .map(([key, val]) => {
-          if (val === null || val === "") {
-            return null;
-          } else if (typeof val === "boolean") {
-            return `${replaceUnderscoreWithSpace(key)}: ${val ? "Yes" : "No"}`;
+          if (typeof val === "string") {
+            return `${replaceUnderscoreWithSpace(key)}: ${val}`;
           } else {
             return `${replaceUnderscoreWithSpace(key)}: ${val}`;
           }
@@ -327,9 +308,6 @@ const Sbe = ({ sbeAllocation }) => {
                 fixedHeader
                 fixedHeaderScrollHeight="60vh"
                 customStyles={tableCustomStyles}
-                // selected={selectedRow}
-                // selectableRows
-                //pagination
               ></DataTable>
             </div>
           )}
@@ -341,8 +319,6 @@ const Sbe = ({ sbeAllocation }) => {
                   <a
                     href="#"
                     onClick={() => {
-                      // setAllocation(true);
-
                       setTableState(false);
                       allocation();
                     }}
@@ -356,7 +332,7 @@ const Sbe = ({ sbeAllocation }) => {
           )}
           {!allocateDabba && noEmp && !tableState && (
             <div className="allocateoptionbody">
-              <div className="allocateoption">There is no such employee</div>
+              <div className="allocateoption">There is no Employee with given details.</div>
             </div>
           )}
           <div className="buttons">
@@ -390,35 +366,31 @@ const Sbe = ({ sbeAllocation }) => {
             </DialogActions>
           </Dialog>
           <div className="title">Asset Details</div>
-          {/* {Object.entries(assetData).map(
-            ([key, value]) =>
-              !["employeeId", "employeeName"].includes(key) &&
-              value !== "" && (
-                <div key={key} className="display">
-                  <div className="keyfield" style={{ width: "200px" }}>
-                    {key}:
-                  </div>{" "}
-                  <div className="valuefield">
-                    {stringifyNestedObjects(value)}
-                  </div>
-                </div>
-              )
-          )} */}
+
           {Object.entries(assetData).map(
-            ([key, value]) =>
-              !["employee_id", "employee_name"].includes(key) &&
-              value !== null &&
-              value !== "" && (
-                <div key={key} className="display">
-                  <div className="keyfield" style={{ width: "200px" }}>
-                    {capitalizeFirstLetter(replaceUnderscoreWithSpace(key))}:
-                  </div>{" "}
-                  <div className="valuefield">
-                    {stringifyNestedObjects(value)}
-                  </div>
+        ([key, value]) =>
+          ![
+            "employee_id",
+            "employee_name",
+            "allocation_status",
+            "is_active"
+          ].includes(key) &&
+          value !== null &&
+          value !== "" && (
+            <div key={key} className="display">
+              <div className="keyfield" style={{ width: "200px" }}>
+                {capitalizeFirstLetter(replaceUnderscoreWithSpace(key))}:
+              </div>
+              {!(typeof value === "boolean") ? (
+                <div className="valuefield">
+                  {stringifyNestedObjects(value)}
                 </div>
-              )
-          )}
+              ) : (
+                <div className="valuefield">{`${value ? "Yes" : "No"}`}</div>
+              )}
+            </div>
+          )
+      )}
           <Box component="form" onSubmit={handleSubmit(handleFormSubmit)}>
             <div className="input">
               <div style={{ marginRight: "23%" }}>
