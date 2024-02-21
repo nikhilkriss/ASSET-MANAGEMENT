@@ -23,34 +23,67 @@ import {
   DialogActions,
 } from "@mui/material";
 const schema = yup.object().shape({
-  ram: yup //only numbers
+  //not laptop
+  asset_name: yup.string().required(),
+  brand: yup.string().required(),
+  model: yup.string(),
+  os: yup.string(),
+  os_version: yup.string().matches(/^(null|[a-zA-Z0-9\s]*)$/), //only numbers, alphabets and space and accepts null
+  price: yup.number().required(),
+  ram: yup //only numbers and accepts null
     .string()
     .matches(/^(\d+|null)?$/),
-  memory: yup //only numbers
+  memory: yup //only numbers and accepts null
     .string()
     .matches(/^(\d+|null)?$/),
-  os_version: yup.string().matches(/^(null|[a-zA-Z0-9\s]*)$/), //only numbers, alphabets and space
-  processor: yup.string().matches(/^(null|[a-zA-Z0-9\s]*)$/), //only numbers, alphabets and space
+  processor: yup.string().matches(/^(null|[a-zA-Z0-9\s]*)$/), //only numbers, alphabets and space and accepts null
   display_dimensions: yup.string().matches(/^(null|[a-zA-Z0-9\s]*)$/),
-  serial_number: yup.number().required("Serial Number is required"),
+  serial_number: yup //only numbers and accepts null
+    .number()
+    .required(),
+});
 
-  price: yup.number().required("price is required"),
-  
+const schema2 = yup.object().shape({
+  //when laptop
+  asset_name: yup.string().required(),
+  brand: yup.string().required(),
+  model: yup.string(),
+  os: yup.string().required(),
+  os_version: yup
+    .string()
+    .matches(/^(null|[a-zA-Z0-9\s]*)$/)
+    .required(), //only numbers, alphabets and space and accepts null
+  price: yup.number().required(),
+  ram: yup //only numbers and accepts null
+    .string()
+    .matches(/^(\d+|null)?$/)
+    .required(),
+  memory: yup //only numbers and accepts null
+    .string()
+    .matches(/^(\d+|null)?$/)
+    .required(),
+  processor: yup
+    .string()
+    .matches(/^(null|[a-zA-Z0-9\s]*)$/)
+    .required(), //only numbers, alphabets and space and accepts null
+  display_dimensions: yup.string().matches(/^(null|[a-zA-Z0-9\s]*)$/),
+  serial_number: yup //only numbers and accepts null
+    .number()
+    .required(),
 });
 const EditAsset = ({ editingData, undoEdit }) => {
+  const selectedSchema = editingData?.asset_name !== "Mouse" ? schema2 : schema;
   
   console.log(editingData);
   const {
     register,
     handleSubmit,
-    reset,
     control,
-    watch,
     formState: { errors },
     resetField,
     setValue,
   } = useForm({
-    resolver: yupResolver(schema),
+    resolver: yupResolver(selectedSchema),
     defaultValues: {
       asset_name: editingData?.asset_name || "",
       brand: editingData?.brand || "",
@@ -74,7 +107,6 @@ const EditAsset = ({ editingData, undoEdit }) => {
   const [giveChance, setGiveChance] = useState(false);
 
   console.log(editingData);
-  // console.log(editingData.owned_by_proxima);
   const putData = async (formData) => {
     try {
       formData.purchase_date = formData.purchase_date ? formData.purchase_date : null;
@@ -114,17 +146,15 @@ const EditAsset = ({ editingData, undoEdit }) => {
     fontSize: "0.86rem",
   };
   const checkLabelStyles = {
-    fontSize: "0.875rem",
+    fontSize: "0.87rem",
     fontWeight: 400,
     color: "rgba(0, 0, 0, 0.6)",
   };
   const handleFormSubmit = (formData) => {
     console.log(formData);
-    console.log("success");
     putData(formData);
   };
   const handleClear = () => {
-    // reset();
     setValue("ram", "");
     setValue("memory", "");
     setValue("processor", "");
@@ -331,6 +361,7 @@ const EditAsset = ({ editingData, undoEdit }) => {
                         <Typography
                           variant="subtitle2"
                           style={checkLabelStyles}
+                          
                         >
                           Owned by Proxima
                         </Typography>
@@ -366,70 +397,87 @@ const EditAsset = ({ editingData, undoEdit }) => {
               }}
             >
               <Box width="180px">
-                <TextField
-                  fullWidth
-                  label="RAM(gb)"
-                  disabled={editingData?.asset_name === "Mouse"}
-                  {...register("ram")}
-                  InputLabelProps={{
-                    style: labelStyles,
-                  }}
-                  error={!!errors.ram}
-                  variant="outlined"
-                  required
-                  size="small"
-                  placeholder="RAM"
-                  sx={{
-                    "& .MuiInputBase-root": {
-                      height: "30px",
-                      width: "180px",
-                    },
-                  }}
+                <Controller
+                  name="ram"
+                  control={control}
+                  defaultValue=""
+                  render={({ field }) => (
+                    <TextField
+                      fullWidth
+                      disabled={editingData?.asset_name === "Mouse"}
+                      label="RAM(gb)"
+                      {...field}
+                      InputLabelProps={{
+                        style: labelStyles,
+                      }}
+                      error={!!errors.ram}
+                      variant="outlined"
+                      size="small"
+                      placeholder="RAM"
+                      sx={{
+                        "& .MuiInputBase-root": {
+                          height: "30px",
+                          width: "180px",
+                        },
+                      }}
+                    />
+                  )}
                 />
               </Box>
               <Box width="180px">
-                <TextField
-                  fullWidth
-                  label="Hard Disk Memory(gb)"
-                  disabled={editingData?.asset_name === "Mouse"}
-                  {...register("memory")}
-                  InputLabelProps={{
-                    style: labelStyles,
-                  }}
-                  variant="outlined"
-                  required
-                  error={!!errors.hdm}
-                  size="small"
-                  placeholder="Hard Disk Memory..."
-                  sx={{
-                    "& .MuiInputBase-root": {
-                      height: "30px",
-                      width: "180px",
-                    },
-                  }}
+                <Controller
+                  name="memory"
+                  control={control}
+                  defaultValue=""
+                  render={({ field }) => (
+                    <TextField
+                      fullWidth
+                      disabled={editingData?.asset_name === "Mouse"}
+                      label="Hard Disk Memory(gb)"
+                      {...field}
+                      InputLabelProps={{
+                        style: labelStyles,
+                      }}
+                      error={!!errors.memory}
+                      variant="outlined"
+                      size="small"
+                      placeholder="Hard Disk Memory..."
+                      sx={{
+                        "& .MuiInputBase-root": {
+                          height: "30px",
+                          width: "180px",
+                        },
+                      }}
+                    />
+                  )}
                 />
               </Box>
               <Box width="180px">
-                <TextField
-                  // value={text}
-                  fullWidth
-                  label="Processor"
-                  disabled={editingData?.asset_name === "Mouse"}
-                  {...register("processor")}
-                  InputLabelProps={{
-                    style: labelStyles,
-                  }}
-                  error={!!errors.processor}
-                  variant="outlined"
-                  required
-                  size="small"
-                  placeholder="Processor..."
-                  sx={{
-                    "& .MuiInputBase-root": {
-                      height: "30px",
-                      width: "180px",
-                    },
-                  }}
+                <Controller
+                  name="processor"
+                  control={control}
+                  defaultValue=""
+                  render={({ field }) => (
+                    <TextField
+                      fullWidth
+                      disabled={editingData?.asset_name === "Mouse"}
+                      label="Processor"
+                      {...field}
+                      InputLabelProps={{
+                        style: labelStyles,
+                      }}
+                      error={!!errors.processor}
+                      variant="outlined"
+                      size="small"
+                      placeholder="Processor..."
+                      sx={{
+                        "& .MuiInputBase-root": {
+                          height: "30px",
+                          width: "180px",
+                        },
+                      }}
+                    />
+                  )}
                 />
               </Box>
             </div>
@@ -441,7 +489,7 @@ const EditAsset = ({ editingData, undoEdit }) => {
                 justifyContent: "space-around",
               }}
             >
-              <Box width="180px" style={{ marginTop: "1.5%" }}>
+              {/* <Box width="180px" style={{ marginTop: "1.5%" }}>
                 <TextField
                   fullWidth
                   label="Serial Number"
@@ -451,7 +499,7 @@ const EditAsset = ({ editingData, undoEdit }) => {
                   }}
                   error={!!errors.serial_number} //same as processor
                   variant="outlined"
-                  required
+                  
                   size="small"
                   placeholder="Serial Number..."
                   sx={{
@@ -461,8 +509,34 @@ const EditAsset = ({ editingData, undoEdit }) => {
                     },
                   }}
                 />
+              </Box> */}
+              <Box width="180px" style={{ marginTop: "1.5%" }}>
+                <Controller
+                  name="serial_number"
+                  control={control}
+                  defaultValue=""
+                  render={({ field }) => (
+                    <TextField
+                      fullWidth
+                      label="Serial Number"
+                      {...field}
+                      InputLabelProps={{
+                        style: labelStyles,
+                      }}
+                      error={!!errors.serial_number}
+                      variant="outlined"
+                      size="small"
+                      placeholder="Serial Number..."
+                      sx={{
+                        "& .MuiInputBase-root": {
+                          height: "30px",
+                          width: "180px",
+                        },
+                      }}
+                    />
+                  )}
+                />
               </Box>
-
               <Box width="180px">
                 <Controller
                   name="purchase_date"
@@ -590,26 +664,33 @@ const EditAsset = ({ editingData, undoEdit }) => {
                   )}
                 />
               </Box>
+              
               <Box width="180px">
-                <TextField
-                  // value={text}
-                  fullWidth
-                  label="Display Dimensions"
-                  disabled={editingData?.asset_name === "Mouse"}
-                  {...register("display_dimensions")}
-                  InputLabelProps={{
-                    style: labelStyles,
-                  }}
-                  variant="outlined"
-                  error={!!errors.display_dimensions} //same as processor
-                  size="small"
-                  placeholder="Display Dimensions"
-                  sx={{
-                    "& .MuiInputBase-root": {
-                      height: "30px",
-                      width: "180px",
-                    },
-                  }}
+                <Controller
+                  name="display_dimensions"
+                  control={control}
+                  defaultValue=""
+                  render={({ field }) => (
+                    <TextField
+                      fullWidth
+                      disabled={editingData?.asset_name === "Mouse"}
+                      label="Display Dimensions"
+                      {...field}
+                      InputLabelProps={{
+                        style: labelStyles,
+                      }}
+                      error={!!errors.display_dimensions}
+                      variant="outlined"
+                      size="small"
+                      placeholder="Display Dimensions..."
+                      sx={{
+                        "& .MuiInputBase-root": {
+                          height: "30px",
+                          width: "180px",
+                        },
+                      }}
+                    />
+                  )}
                 />
               </Box>
               <Box width="180px"></Box>

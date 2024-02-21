@@ -37,9 +37,9 @@ const Allocate = ({ allocateDone, id, sbe, sbeName }) => {
   const getEmployeeData = async () => {
     try {
       const response = await axios.get(
-        config.API_ENDPOINT2 + "v1/EmployeeProfiles"
+        config.API_ENDPOINT2 + "v1/EmployeeProfiles/NR"
       );
-      const data = response.data.employees;
+      const data = response.data;
       console.log(data);
       setEmployeeProfiles(data);
     } catch (error) {
@@ -58,7 +58,7 @@ const Allocate = ({ allocateDone, id, sbe, sbeName }) => {
   const stringifyNestedObjects = (value) => {
     if (typeof value === "object" && value !== null) {
       return Object.entries(value)
-        .map(([key, val]) => {
+        ?.map(([key, val]) => {
           if (typeof val === "string") {
             return `${replaceUnderscoreWithSpace(key)}: ${val}`;
           } else {
@@ -71,6 +71,25 @@ const Allocate = ({ allocateDone, id, sbe, sbeName }) => {
     return value;
   };
 
+  
+  const desiredKeyOrder = [
+    "asset_name",
+    "brand",
+    "model",
+    "os",
+    "os_version",
+    "price",
+    "owned_by_proxima",
+    "ram",
+    "memory",
+    "processor",
+    "serial_number",
+    "purchase_date",
+    "carepaq_expiry_status",
+    "warranty_status",
+    "display_dimensions",
+    "modified_date"
+  ];
   const labelStyles = {
     fontSize: "0.875rem",
   };
@@ -148,7 +167,7 @@ const Allocate = ({ allocateDone, id, sbe, sbeName }) => {
       </Dialog>
       <div className="title">Asset Details</div>
 
-      {Object.entries(assetData).map(
+      {/* {Object.entries(assetData)?.map(
         ([key, value]) =>
           ![
             "employee_id",
@@ -157,24 +176,51 @@ const Allocate = ({ allocateDone, id, sbe, sbeName }) => {
             "is_active",
             "reason_for_allocation",
             "allocation_date",
+            "asset_id",
+            "asset_category_id",
+            "category_name",
           ].includes(key) &&
           value !== null &&
           value !== "" && (
             <div key={key} className="display">
               <div className="keyfield" style={{ width: "200px" }}>
-                {capitalizeFirstLetter(replaceUnderscoreWithSpace(key))}:
+                {capitalizeFirstLetter(replaceUnderscoreWithSpace(key))}
               </div>
               {!(typeof value === "boolean") ? (
                 <div className="valuefield">
-                  {stringifyNestedObjects(value)}
+                  : {key === "ram" || key === "memory"
+                    ? `${stringifyNestedObjects(value)} gb`
+                    : key === "price"
+                    ? `₹ ${stringifyNestedObjects(value)}`
+                    : stringifyNestedObjects(value)}
                 </div>
               ) : (
-                <div className="valuefield">{`${value ? "Yes" : "No"}`}</div>
+                <div className="valuefield">: {`${value ? "Yes" : "No"}`}</div>
               )}
             </div>
           )
-      )}
+      )} */}
 
+{
+    desiredKeyOrder.map(key =>
+      assetData[key] !== null && assetData[key] !== "" && (
+        <div key={key} className="display">
+          <div className="keyfield" style={{ width: "200px" }}>
+            {capitalizeFirstLetter(replaceUnderscoreWithSpace(key))}
+          </div>
+          <div className="valuefield">
+          : {key === "ram" || key === "memory"
+            ? `${stringifyNestedObjects(assetData[key])} gb`
+            : key === "price"
+            ? `₹ ${stringifyNestedObjects(assetData[key])}`
+            : typeof assetData[key] === "boolean"
+            ? `${assetData[key] ? "Yes" : "No"}`
+            : stringifyNestedObjects(assetData[key])}
+        </div>
+        </div>
+      )
+    )
+  }
       <Box component="form" onSubmit={handleSubmit(handleFormSubmit)}>
         <div className="input">
           <div style={{ marginRight: "23%" }}>
@@ -198,7 +244,7 @@ const Allocate = ({ allocateDone, id, sbe, sbeName }) => {
                   },
                 }}
               >
-                {employeeProfiles.map((employee) => (
+                {employeeProfiles?.map((employee) => (
                   <MenuItem
                     key={employee.employee_id}
                     value={employee.employee_id}
@@ -216,7 +262,6 @@ const Allocate = ({ allocateDone, id, sbe, sbeName }) => {
                   InputLabelProps={{
                     style: labelStyles,
                   }}
-                  // {...register("employee_id")}
                   fullWidth
                   size="small"
                   sx={{
@@ -247,3 +292,5 @@ const Allocate = ({ allocateDone, id, sbe, sbeName }) => {
   );
 };
 export default Allocate;
+
+

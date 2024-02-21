@@ -31,7 +31,7 @@ const tableCustomStyles = {
   },
   cells: {
     style: {
-      fontSize: "12px",
+      fontSize: "13px",
       justifyContent: "center",
       backgroundColor: "white",
       fontFamily: "Sans-serif",
@@ -49,7 +49,7 @@ const Sbc = () => {
   const [selectedRow, setSelectedRow] = useState(null);
   const [allocate, setAllocate] = useState(false);
   const [assetData, setAssetData] = useState([]);
-  const [employeeList, setEmployeeList] = useState([]);
+  // const [employeeList, setEmployeeList] = useState([]);
   const [assetTable, setAssetTable] = useState([]);
   const [tableState, setTableState] = useState(false);
   const [chance, setChance] = useState(false);
@@ -66,6 +66,24 @@ const Sbc = () => {
     }
   }, [selectedRow]);
 
+  const desiredKeyOrder = [
+    "asset_name",
+    "brand",
+    "model",
+    "os",
+    "os_version",
+    "price",
+    "owned_by_proxima",
+    "ram",
+    "memory",
+    "processor",
+    "serial_number",
+    "purchase_date",
+    "carepaq_expiry_status",
+    "warranty_status",
+    "display_dimensions",
+    "modified_date",
+  ];
   const capitalizeFirstLetter = (str) => {
     return str.replace(/\b\w/g, (match) => match.toUpperCase());
   };
@@ -77,7 +95,7 @@ const Sbc = () => {
   const stringifyNestedObjects = (value) => {
     if (typeof value === "object" && value !== null) {
       return Object.entries(value)
-        .map(([key, val]) => {
+        ?.map(([key, val]) => {
           if (typeof val === "string") {
             return `${replaceUnderscoreWithSpace(key)}: ${val}`;
           } else {
@@ -99,7 +117,6 @@ const Sbc = () => {
             formData.reason ? `/${formData.reason}` : ""
           }`
       );
-      // console.log(response);
       setDialogOpen(true);
     } catch (error) {
       console.log(error);
@@ -114,7 +131,6 @@ const Sbc = () => {
       memory: formData.memory,
       processor: formData.processor,
     };
-
     try {
       console.log(formData);
       await axios
@@ -137,6 +153,7 @@ const Sbc = () => {
   };
   const handleFormSubmit = (formData) => {
     console.log(formData);
+    setChance(false);
     setAssetTable([]);
     if (
       formData.os ||
@@ -159,9 +176,9 @@ const Sbc = () => {
   const getEmployeeData = async () => {
     try {
       const response = await axios.get(
-        config.API_ENDPOINT2 + "v1/EmployeeProfiles"
+        config.API_ENDPOINT2 + "v1/EmployeeProfiles/NR"
       );
-      const data = response.data.employees;
+      const data = response.data;
       console.log(data);
       setEmployeeProfiles(data);
     } catch (error) {
@@ -186,11 +203,7 @@ const Sbc = () => {
 
   const columns = [
     {
-      name: "Asset Id",
-      selector: (row) => row.asset_id,
-    },
-    {
-      name: "Asset",
+      name: "Asset Name",
       cell: (row) => (
         <a
           href="#"
@@ -201,22 +214,33 @@ const Sbc = () => {
         </a>
       ),
     },
-
     {
       name: "Brand",
       selector: (row) => row.brand,
     },
     {
-      name: "OS Version",
-      selector: (row) => row.os_version,
+      name: "Configuration",
+      cell: (row) => (
+        <div>
+          <span>{row.os}{row.os ? ', ' : ''}</span>
+          <span><span>{row.ram ? 'Ram:' : ''}</span> {row.ram}<span>{row.ram ? 'gb, ' : ''}</span></span>
+          <span><span>{row.memory ? 'Memory:' : ''}</span> {row.memory}<span>{row.memory ? 'gb, ' : ''}</span></span>
+          <span>{row.processor}{row.processor ? ', ' : ''}</span>
+          <span>{row.serial_number}</span>
+        </div>
+      ),
+      // width: "13%"
     },
   ];
+  const handleClear = () => {
+    reset();
+  };
 
   return (
     <div className="sbcbody">
       {!allocate ? (
         <div>
-          <div className="searchByEmployeeHeading">Search By Configuration</div>
+          <div className="searchByConfigHeading">Search By Configuration</div>
           <div className="sbc">
             <Box component="form" onSubmit={handleSubmit(handleFormSubmit)}>
               <div className="row">
@@ -234,6 +258,7 @@ const Sbc = () => {
                     "& .MuiInputBase-root": {
                       height: "40px",
                       width: "180px",
+                      backgroundColor:"white"
                     },
                   }}
                 />
@@ -251,8 +276,9 @@ const Sbc = () => {
                     "& .MuiInputBase-root": {
                       height: "40px",
                       width: "180px",
+                      backgroundColor:"white"
                     },
-                  }}
+                  }} 
                 />
                 <TextField
                   fullWidth
@@ -268,6 +294,7 @@ const Sbc = () => {
                     "& .MuiInputBase-root": {
                       height: "40px",
                       width: "180px",
+                      backgroundColor:"white"
                     },
                   }}
                 />
@@ -287,6 +314,7 @@ const Sbc = () => {
                     "& .MuiInputBase-root": {
                       height: "40px",
                       width: "180px",
+                      backgroundColor:"white"
                     },
                   }}
                 />
@@ -304,6 +332,7 @@ const Sbc = () => {
                     "& .MuiInputBase-root": {
                       height: "40px",
                       width: "180px",
+                      backgroundColor:"white"
                     },
                   }}
                 />
@@ -321,6 +350,7 @@ const Sbc = () => {
                     "& .MuiInputBase-root": {
                       height: "40px",
                       width: "180px",
+                      backgroundColor:"white"
                     },
                   }}
                 />
@@ -333,14 +363,25 @@ const Sbc = () => {
                 ) : (
                   <div></div>
                 )}
+                <div style={{}}>
                 <Button
-                  variant="outlined"
+                  variant="contained"
+                  onClick={handleClear}
+                  size="small"
+                  className="searchbtn"
+                  style={{marginRight:"15px"}}
+                >
+                  Clear All
+                </Button>
+                <Button
+                  variant="contained"
                   type="submit"
                   size="small"
                   className="searchbtn"
                 >
                   Search
                 </Button>
+                </div>
               </div>
             </Box>
             <div>
@@ -354,7 +395,9 @@ const Sbc = () => {
                 ></DataTable>
               )}
               {!tableState && chance && (
-                <div>No Assets with the given Specifications</div>
+                <div className="warning">
+                  No Unallocated Assets with the given Configurations
+                </div>
               )}
             </div>
           </div>
@@ -387,31 +430,25 @@ const Sbc = () => {
               </DialogActions>
             </Dialog>
             <div className="title">Asset Details</div>
-            {Object.entries(assetData).map(
-              ([key, value]) =>
-                ![
-                  "employee_id",
-                  "employee_name",
-                  "allocation_status",
-                  "is_active",
-                  "reason_for_allocation",
-                  "allocation_date",
-                ].includes(key) &&
-                value !== null &&
-                value !== "" && (
+
+            {desiredKeyOrder.map(
+              (key) =>
+                assetData[key] !== null &&
+                assetData[key] !== "" && (
                   <div key={key} className="display">
                     <div className="keyfield" style={{ width: "200px" }}>
-                      {capitalizeFirstLetter(replaceUnderscoreWithSpace(key))}:
+                      {capitalizeFirstLetter(replaceUnderscoreWithSpace(key))}
                     </div>
-                    {!(typeof value === "boolean") ? (
-                      <div className="valuefield">
-                        {stringifyNestedObjects(value)}
-                      </div>
-                    ) : (
-                      <div className="valuefield">{`${
-                        value ? "Yes" : "No"
-                      }`}</div>
-                    )}
+                    <div className="valuefield">
+                      :{" "}
+                      {key === "ram" || key === "memory"
+                        ? `${stringifyNestedObjects(assetData[key])} gb`
+                        : key === "price"
+                        ? `₹ ${stringifyNestedObjects(assetData[key])}`
+                        : typeof assetData[key] === "boolean"
+                        ? `${assetData[key] ? "Yes" : "No"}`
+                        : stringifyNestedObjects(assetData[key])}
+                    </div>
                   </div>
                 )
             )}
@@ -438,7 +475,7 @@ const Sbc = () => {
                       },
                     }}
                   >
-                    {employeeProfiles.map((employee) => (
+                    {employeeProfiles?.map((employee) => (
                       <MenuItem
                         key={employee.employee_id}
                         value={employee.employee_id}

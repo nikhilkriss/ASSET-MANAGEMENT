@@ -24,19 +24,49 @@ import {
 } from "@mui/material";
 
 const schema = yup.object().shape({
+  //not laptop
+  asset_name: yup.string().required(),
+  brand: yup.string().required(),
+  model: yup.string(),
+  os: yup.string(),
+  os_version: yup.string().matches(/^(null|[a-zA-Z0-9\s]*)$/), //only numbers, alphabets and space and accepts null
+  price: yup.number().required(),
   ram: yup //only numbers and accepts null
     .string()
     .matches(/^(\d+|null)?$/),
   memory: yup //only numbers and accepts null
     .string()
     .matches(/^(\d+|null)?$/),
-  os_version: yup.string().matches(/^(null|[a-zA-Z0-9\s]*)$/), //only numbers, alphabets and space and accepts null
+  processor: yup.string().matches(/^(null|[a-zA-Z0-9\s]*)$/), //only numbers, alphabets and space and accepts null
+  display_dimensions: yup.string().matches(/^(null|[a-zA-Z0-9\s]*)$/),
+  serial_number: yup //only numbers and accepts null
+    .number()
+    .required(),
+});
+
+const schema2 = yup.object().shape({
+  //when laptop
+  asset_name: yup.string().required(),
+  brand: yup.string().required(),
+  model: yup.string(),
+  os: yup.string().required(),
+  os_version: yup
+    .string()
+    .matches(/^(null|[a-zA-Z0-9\s]*)$/)
+    .required(), //only numbers, alphabets and space and accepts null
+  price: yup.number().required(),
+  ram: yup //only numbers and accepts null
+    .string()
+    .matches(/^(\d+|null)?$/)
+    .required(),
+  memory: yup //only numbers and accepts null
+    .string()
+    .matches(/^(\d+|null)?$/)
+    .required(),
   processor: yup
     .string()
-    .matches(/^(null|[a-zA-Z0-9\s]*)$/), //only numbers, alphabets and space and accepts null
-  price: yup
-    .number()
-    .required("price is required"),
+    .matches(/^(null|[a-zA-Z0-9\s]*)$/)
+    .required(), //only numbers, alphabets and space and accepts null
   display_dimensions: yup.string().matches(/^(null|[a-zA-Z0-9\s]*)$/),
   serial_number: yup //only numbers and accepts null
     .number()
@@ -44,6 +74,14 @@ const schema = yup.object().shape({
 });
 
 const AddAsset = () => {
+  const [addDialog, setAddDialog] = useState(false);
+  const [brandOptions, setBrandOptions] = useState([]);
+  const [osOptions, setOsOptions] = useState(["Windows", "Linux", "Mac"]);
+  const [categoryState, setCategoryState] = useState("");
+  const [categoryId, setCategoryId] = useState(null);
+  const [isRequired, setIsRequired] = useState(false);
+
+  const selectedSchema = categoryState !== "Mouse" ? schema2 : schema;
   const {
     register,
     handleSubmit,
@@ -53,21 +91,13 @@ const AddAsset = () => {
     setValue,
     formState: { errors },
   } = useForm({
-    resolver: yupResolver(schema),
+    resolver: yupResolver(selectedSchema),
   });
-
-  const [addDialog, setAddDialog] = useState(false);
-  const [brandOptions, setBrandOptions] = useState([]);
-  const [modelOptions, setModelOptions] = useState([]);
-  const [osOptions, setOsOptions] = useState([]);
-  const [categoryState, setCategoryState] = useState("");
-  const [brandState, setBrandState] = useState("");
-  const [categoryId, setCategoryId] = useState(null);
-
   let categoryValue = watch("asset_name");
-  let brandValue = watch("brand");
 
   useEffect(() => {
+    setValue("brand", "");
+    setValue("model", "");
     if (categoryState === "Mouse") {
       setValue("ram", "");
       setValue("display_dimensions", "");
@@ -81,51 +111,20 @@ const AddAsset = () => {
     if (categoryValue === "Laptop") {
       setCategoryId(1);
       setCategoryState("Laptop");
-      setBrandOptions(["Dell", "Lenovo", "HP"]);
-    } else if (categoryValue === "Macbook") {
-      setCategoryId(2);
-      setCategoryState("Macbook");
-      setBrandOptions(["Apple"]);
+      setBrandOptions(["Dell", "Lenovo", "HP", "Macbook"]);
     } else if (categoryValue === "Mouse") {
-      setCategoryId(3);
+      setCategoryId(2);
       setCategoryState("Mouse");
       setBrandOptions(["Logitech", "Dell", "Zebronics"]);
     }
-    if (categoryValue === "Laptop" || categoryValue === "Macbook") {
-      setOsOptions(["windows", "macos", "linux", "chromeos"]);
-    }
   }, [categoryValue]);
-  //
-  useEffect(() => {
-    if (categoryState === "Laptop" && brandValue === "HP") {
-      setModelOptions(["HP Model 1", "HP Model 2"]);
-      setBrandState("HP");
-    } else if (categoryState === "Laptop" && brandValue === "Dell") {
-      setModelOptions(["Dell Model 1", "Dell Model 2"]);
-    } else if (categoryState === "Laptop" && brandValue === "Lenovo") {
-      setModelOptions(["Lenovo Model 1", "Lenovo Model 2"]);
-    } else if (categoryState === "Macbook" && brandValue === "Apple") {
-      setModelOptions(["Macbook 1", "Macbook 2", "Macbook 3"]);
-    } else if (categoryState === "Mouse" && brandValue === "Dell") {
-      setModelOptions(["Dell Mouse 1", "Dell Mouse 2"]);
-    } else if (categoryState === "Mouse" && brandValue === "Logitech") {
-      setModelOptions(["Logitech Mouse 1", "Logitech Mouse 2"]);
-    } else if (categoryState === "Mouse" && brandValue === "Zebronics") {
-      setModelOptions(["Zebronics Mouse 1", "Zebronics Mouse 2"]);
-    }
-  }, [categoryState, brandValue]);
-  //mouse
+
   let brandMenuOptions = brandOptions.map((item, index) => (
     <MenuItem value={item} key={index}>
       {item}
     </MenuItem>
   ));
 
-  let modelMenuOptions = modelOptions.map((item, index) => (
-    <MenuItem value={item} key={index}>
-      {item}
-    </MenuItem>
-  ));
   let osMenuOptions = osOptions.map((item, index) => (
     <MenuItem value={item} key={index}>
       {item}
@@ -146,13 +145,10 @@ const AddAsset = () => {
 
   const postData = async (formData) => {
     try {
+      setTimeout(setIsRequired(true), 10000);
       formData.asset_category_id = categoryId;
       formData.allocation_status = false;
-      
-      // console.log(formData);
-
       const jsonString = JSON.stringify(formData);
-
       console.log(jsonString);
       const response = await axios.post(
         config.API_ENDPOINT + "v1/Assets",
@@ -179,10 +175,7 @@ const AddAsset = () => {
   const handleClear = () => {
     reset();
     categoryValue = null;
-    brandValue = null;
     setCategoryState(null);
-    setBrandState(null);
-    console.log(categoryValue);
   };
   //
   return (
@@ -229,22 +222,25 @@ const AddAsset = () => {
                 <Controller
                   name="asset_name"
                   control={control}
+                  {...register("asset_name")}
                   defaultValue=""
                   render={({ field }) => (
-                    <FormControl fullWidth size="small" required>
-                      <InputLabel id="category-label" style={selectLabelStyles}>
+                    <FormControl fullWidth size="small" required={isRequired}>
+                      <InputLabel
+                        id="category-label"
+                        style={selectLabelStyles}
+                        error={!!errors.asset_name}
+                      >
                         Category
                       </InputLabel>
                       <Select
                         {...field}
                         style={{ height: "30px", width: "180px" }}
                         label="Category"
+                        error={!!errors.asset_name}
                       >
                         <MenuItem value="Laptop" key="Laptop">
                           Laptop
-                        </MenuItem>
-                        <MenuItem value="Macbook" key="Macbook">
-                          Macbook
                         </MenuItem>
                         <MenuItem value="Mouse" key="Mouse">
                           Mouse
@@ -258,17 +254,22 @@ const AddAsset = () => {
                 <Controller
                   name="brand"
                   control={control}
-                  required
+                  {...register("brand")}
                   defaultValue=""
                   render={({ field }) => (
-                    <FormControl fullWidth size="small" required>
-                      <InputLabel id="category-label" style={selectLabelStyles}>
+                    <FormControl fullWidth size="small">
+                      <InputLabel
+                        id="category-label"
+                        style={selectLabelStyles}
+                        error={!!errors.brand}
+                      >
                         Brand
                       </InputLabel>
                       <Select
                         {...field}
                         style={{ height: "30px", width: "180px" }}
                         label="Brand"
+                        error={!!errors.brand}
                       >
                         {brandMenuOptions}
                       </Select>
@@ -276,23 +277,30 @@ const AddAsset = () => {
                   )}
                 />
               </Box>
+              
               <Box>
                 <Controller
                   name="model"
                   control={control}
                   defaultValue=""
                   render={({ field }) => (
-                    <FormControl fullWidth size="small" required>
-                      <InputLabel id="category-label" style={selectLabelStyles}>
-                        Model
-                      </InputLabel>
-                      <Select
-                        {...field}
-                        style={{ height: "30px", width: "180px" }}
-                      >
-                        {modelMenuOptions}
-                      </Select>
-                    </FormControl>
+                    <TextField
+                      fullWidth
+                      label="Model"
+                      {...field}
+                      InputLabelProps={{
+                        style: labelStyles,
+                      }}
+                      variant="outlined"
+                      size="small"
+                      placeholder={"Model..."}
+                      sx={{
+                        "& .MuiInputBase-root": {
+                          height: "30px",
+                          width: "180px",
+                        },
+                      }}
+                    />
                   )}
                 />
               </Box>
@@ -309,17 +317,21 @@ const AddAsset = () => {
                 <Controller
                   name="os"
                   control={control}
+                  {...register("os")}
+                  // {...(categoryState === "Laptop" ? register("os") : {})}
                   defaultValue=""
                   render={({ field }) => (
                     <FormControl
                       fullWidth
                       size="small"
-                      required={categoryState !== "Mouse"}
+                      // required={categoryState !== "Mouse"}
                     >
                       <InputLabel
                         id="category-label"
                         disabled={categoryState === "Mouse"}
                         style={selectLabelStyles}
+                        // error={!!errors.os}
+                        error={categoryState !== "Mouse" && !!errors.os}
                       >
                         OS
                       </InputLabel>
@@ -327,6 +339,8 @@ const AddAsset = () => {
                         {...field}
                         style={{ height: "30px", width: "180px" }}
                         disabled={categoryState === "Mouse"}
+                        // error={!!errors.os}
+                        error={categoryState !== "Mouse" && !!errors.os}
                       >
                         {osMenuOptions}
                       </Select>
@@ -334,46 +348,61 @@ const AddAsset = () => {
                   )}
                 />
               </Box>
+              
               <Box>
-                <TextField
-                  fullWidth
-                  label="OS Version"
-                  required={categoryState !== "Mouse"}
-                  disabled={categoryState === "Mouse"}
-                  InputLabelProps={{
-                    style: labelStyles,
-                  }}
-                  variant="outlined"
-                  size="small"
-                  {...register("os_version")}
-                  placeholder={"OS Version..."}
-                  error={!!errors.display_dimensions}
-                  sx={{
-                    "& .MuiInputBase-root": {
-                      height: "30px",
-                      width: "180px",
-                    },
-                  }}
+                <Controller
+                  name="os_version"
+                  control={control}
+                  defaultValue=""
+                  render={({ field }) => (
+                    <TextField
+                      fullWidth
+                      label="OS Version"
+                      {...field}
+                      disabled={categoryState === "Mouse"}
+                      InputLabelProps={{
+                        style: labelStyles,
+                      }}
+                      variant="outlined"
+                      size="small"
+                      placeholder="OS Version..."
+                      error={categoryState !== "Mouse" && !!errors.os_version}
+                      sx={{
+                        "& .MuiInputBase-root": {
+                          height: "30px",
+                          width: "180px",
+                        },
+                      }}
+                    />
+                  )}
                 />
               </Box>
+
               <Box>
-                <TextField
-                  fullWidth
-                  label={<span>Price &#8377;</span>}
-                  InputLabelProps={{
-                    style: labelStyles,
-                  }}
-                  variant="outlined"
-                  size="small"
-                  {...register("price")}
-                  placeholder={"Price..."}
-                  error={!!errors.price}
-                  sx={{
-                    "& .MuiInputBase-root": {
-                      height: "30px",
-                      width: "180px",
-                    },
-                  }}
+                <Controller
+                  name="price"
+                  control={control}
+                  defaultValue=""
+                  render={({ field }) => (
+                    <TextField
+                      fullWidth
+                      label={<span>Price &#8377;</span>}
+                      {...field}
+                      InputLabelProps={{
+                        style: labelStyles,
+                      }}
+                      variant="outlined"
+                      size="small"
+                      placeholder="Price..."
+                      error={!!errors.price}
+                      sx={{
+                        "& .MuiInputBase-root": {
+                          height: "30px",
+                          width: "180px",
+                        },
+                      }}
+                    />
+                  )}
                 />
               </Box>
             </div>
@@ -423,7 +452,7 @@ const AddAsset = () => {
             </div>
           </div>
         </div>
-        {/*                                               details */}
+        {/*                                                                   details */}
         <div className="details">
           <div className="detailstitle">Details</div>
           <div className="inputs">
@@ -434,73 +463,91 @@ const AddAsset = () => {
                 justifyContent: "space-around",
               }}
             >
+              
               <Box width="180px">
-                <TextField
-                  fullWidth
-                  required={categoryState !== "Mouse"}
-                  disabled={categoryState === "Mouse"}
-                  label="RAM(gb)"
-                  {...register("ram")}
-                  InputLabelProps={{
-                    style: labelStyles,
-                  }}
-                  error={!!errors.ram}
-                  variant="outlined"
-                  // required
-                  size="small"
-                  placeholder="RAM"
-                  sx={{
-                    "& .MuiInputBase-root": {
-                      height: "30px",
-                      width: "180px",
-                    },
-                  }}
+                <Controller
+                  name="ram"
+                  control={control}
+                  defaultValue=""
+                  render={({ field }) => (
+                    <TextField
+                      fullWidth
+                      disabled={categoryState === "Mouse"}
+                      label="RAM(gb)"
+                      {...field}
+                      InputLabelProps={{
+                        style: labelStyles,
+                      }}
+                      error={categoryState !== "Mouse" && !!errors.ram}
+                      variant="outlined"
+                      size="small"
+                      placeholder="RAM"
+                      sx={{
+                        "& .MuiInputBase-root": {
+                          height: "30px",
+                          width: "180px",
+                        },
+                      }}
+                    />
+                  )}
                 />
               </Box>
+
               <Box width="180px">
-                <TextField
-                  fullWidth
-                  label="Hard Disk Memory(gb)"
-                  required={categoryState !== "Mouse"}
-                  disabled={categoryState === "Mouse"}
-                  {...register("memory")}
-                  InputLabelProps={{
-                    style: labelStyles,
-                  }}
-                  variant="outlined"
-                  // required
-                  error={!!errors.memory}
-                  size="small"
-                  placeholder="Hard Disk Memory..."
-                  sx={{
-                    "& .MuiInputBase-root": {
-                      height: "30px",
-                      width: "180px",
-                    },
-                  }}
+                <Controller
+                  name="memory"
+                  control={control}
+                  defaultValue=""
+                  render={({ field }) => (
+                    <TextField
+                      fullWidth
+                      label="Hard Disk Memory(gb)"
+                      disabled={categoryState === "Mouse"}
+                      {...field}
+                      InputLabelProps={{
+                        style: labelStyles,
+                      }}
+                      variant="outlined"
+                      error={categoryState !== "Mouse" && !!errors.memory}
+                      size="small"
+                      placeholder="Hard Disk Memory..."
+                      sx={{
+                        "& .MuiInputBase-root": {
+                          height: "30px",
+                          width: "180px",
+                        },
+                      }}
+                    />
+                  )}
                 />
               </Box>
+
               <Box width="180px">
-                <TextField
-                  // value={text}
-                  fullWidth
-                  disabled={categoryState === "Mouse"}
-                  label="Processor"
-                  required={categoryState !== "Mouse"}
-                  {...register("processor")}
-                  InputLabelProps={{
-                    style: labelStyles,
-                  }}
-                  error={!!errors.processor}
-                  variant="outlined"
-                  size="small"
-                  placeholder="Processor..."
-                  sx={{
-                    "& .MuiInputBase-root": {
-                      height: "30px",
-                      width: "180px",
-                    },
-                  }}
+                <Controller
+                  name="processor"
+                  control={control}
+                  defaultValue=""
+                  render={({ field }) => (
+                    <TextField
+                      fullWidth
+                      disabled={categoryState === "Mouse"}
+                      label="Processor"
+                      {...field}
+                      InputLabelProps={{
+                        style: labelStyles,
+                      }}
+                      error={categoryState !== "Mouse" && !!errors.processor}
+                      variant="outlined"
+                      size="small"
+                      placeholder="Processor..."
+                      sx={{
+                        "& .MuiInputBase-root": {
+                          height: "30px",
+                          width: "180px",
+                        },
+                      }}
+                    />
+                  )}
                 />
               </Box>
             </div>
@@ -512,28 +559,34 @@ const AddAsset = () => {
                 justifyContent: "space-around",
               }}
             >
-              <Box width="180px" style={{marginTop:"1.5%"}}>
-                <TextField
-                  fullWidth
-                  required
-                  label="Serial Number"
-                  {...register("serial_number")}
-                  InputLabelProps={{
-                    style: labelStyles,
-                  }}
-                  error={!!errors.serial_number}
-                  variant="outlined"
-                  size="small"
-                  placeholder="Serial Number..."
-                  sx={{
-                    "& .MuiInputBase-root": {
-                      height: "30px",
-                      width: "180px",
-                      
-                    },
-                  }}
+              <Box width="180px" style={{ marginTop: "1.5%" }}>
+                <Controller
+                  name="serial_number"
+                  control={control}
+                  defaultValue=""
+                  render={({ field }) => (
+                    <TextField
+                      fullWidth
+                      label="Serial Number"
+                      {...field}
+                      InputLabelProps={{
+                        style: labelStyles,
+                      }}
+                      error={!!errors.serial_number}
+                      variant="outlined"
+                      size="small"
+                      placeholder="Serial Number..."
+                      sx={{
+                        "& .MuiInputBase-root": {
+                          height: "30px",
+                          width: "180px",
+                        },
+                      }}
+                    />
+                  )}
                 />
               </Box>
+
               <Box width="180px">
                 <Controller
                   name="purchase_date"
@@ -551,7 +604,15 @@ const AddAsset = () => {
                           },
                         }}
                         label={
-                          <div style={{fontSize:"14px",fontWeight:"400", position:"relative", top:"5px"}}>
+                          <div
+                            style={{
+                              fontFamily: "Roboto",
+                              fontSize: "14px",
+                              fontWeight: "400",
+                              position: "relative",
+                              top: "5px",
+                            }}
+                          >
                             Purchase Date
                           </div>
                         }
@@ -593,15 +654,19 @@ const AddAsset = () => {
                           },
                         }}
                         label={
-                          <div style={{fontSize:"14px",fontWeight:"400", position:"relative", top:"5px"}}>
+                          <div
+                            style={{
+                              fontFamily: "Roboto",
+                              fontSize: "14px",
+                              fontWeight: "400",
+                              position: "relative",
+                              top: "5px",
+                            }}
+                          >
                             CarePaqExp Date
                           </div>
                         }
-                        renderInput={(params) => (
-                          <TextField
-                            {...params}
-                          />
-                        )}
+                        renderInput={(params) => <TextField {...params} />}
                         value={field.value ? new Date(field.value) : null}
                         onChange={(date) => {
                           field.onChange(
@@ -614,7 +679,7 @@ const AddAsset = () => {
                 />
               </Box>
             </div>
-            
+
             <div
               style={{
                 display: "flex",
@@ -650,25 +715,36 @@ const AddAsset = () => {
                   )}
                 />
               </Box>
+              
               <Box width="180px">
-                <TextField
-                  disabled={categoryState === "Mouse"}
-                  fullWidth
-                  label="Display Dimensions"
-                  {...register("display_dimensions")}
-                  InputLabelProps={{
-                    style: labelStyles,
-                  }}
-                  variant="outlined"
-                  error={!!errors.display_dimensions}
-                  size="small"
-                  placeholder="Display Dimensions"
-                  sx={{
-                    "& .MuiInputBase-root": {
-                      height: "30px",
-                      width: "180px",
-                    },
-                  }}
+                <Controller
+                  name="display_dimensions"
+                  control={control}
+                  defaultValue=""
+                  render={({ field }) => (
+                    <TextField
+                      disabled={categoryState === "Mouse"}
+                      fullWidth
+                      label="Display Dimensions"
+                      {...field}
+                      InputLabelProps={{
+                        style: labelStyles,
+                      }}
+                      variant="outlined"
+                      error={
+                        categoryState === "Laptop" &&
+                        !!errors.display_dimensions
+                      }
+                      size="small"
+                      placeholder="Display Dimensions"
+                      sx={{
+                        "& .MuiInputBase-root": {
+                          height: "30px",
+                          width: "180px",
+                        },
+                      }}
+                    />
+                  )}
                 />
               </Box>
               <Box width="180px"></Box>
@@ -690,4 +766,3 @@ const AddAsset = () => {
   );
 };
 export default AddAsset;
-

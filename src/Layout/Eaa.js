@@ -12,7 +12,7 @@ const tableCustomStyles = {
   },
   headCells: {
     style: {
-      fontSize: "15px",
+      fontSize: "13px",
       backgroundColor: "lightGreen",
       justifyContent: "center",
       color: "black",
@@ -20,7 +20,7 @@ const tableCustomStyles = {
   },
   cells: {
     style: {
-      fontSize: "13px",
+      fontSize: "12px",
       justifyContent: "center",
       backgroundColor: "white",
       fontFamily: "Sans-serif",
@@ -41,7 +41,7 @@ const Eaa = () => {
     } catch (error) {
       console.log(error);
     }
-    // setData(employeeDetails);
+
   };
   useEffect(() => {
     getData();
@@ -55,17 +55,12 @@ const Eaa = () => {
     {
       name: "Employee Name",
       selector: (row) => row.employee_name,
-      width: "14%"
-    },
-    {
-      name: "Asset Id",
-      selector: (row) => row.asset_id,
-      width: "8%"
+      width: "12%"
     },
     {
       name: "Category",
       selector: (row) => row.category_name,
-      // width: "11%"
+      width: "11%"
     },
     {
       name: "Brand",
@@ -76,10 +71,11 @@ const Eaa = () => {
       name: "Configuration",
       cell: (row) => (
         <div>
-          <span>{row.os}, </span>
-          <span><span>Ram:</span> {row.ram}<span>gb,</span></span>
-          <span><span>Memory:</span>{row.memory}<span>gb,</span> </span>
-          <span>{row.processor}, </span>
+          
+          <span>{row.os}{row.os ? ', ' : ''}</span>
+          <span><span>{row.ram ? 'Ram:' : ''}</span> {row.ram}<span>{row.ram ? 'gb, ' : ''}</span></span>
+          <span><span>{row.memory ? 'Memory:' : ''}</span> {row.memory}<span>{row.memory ? 'gb, ' : ''}</span></span>
+          <span>{row.processor}{row.processor ? ', ' : ''}</span>
           <span>{row.serial_number}</span>
         </div>
       ),
@@ -89,19 +85,19 @@ const Eaa = () => {
       name: "CarePaqExpStatus",
       selector: (row) => row.id,
       cell: (row) => <div>{row.carepaqexpstatus ? "Yes" : "No"}</div>,
-      width: "15%"  //
+      width: "14%"  
     },
     {
       name: "Warranty Status",
       selector: (row) => row.id,
-      cell: (row) => <div>{row.warranty_status}</div>,
-      width: "13%"  //
+      cell: (row) => <div>{row.warranty_status?row.warranty_status:"-"}</div>,
+      width: "12%"  
     },
     {
       name: "Owned By Proxima",
       selector: (row) => row.id,
       cell: (row) => <div>{row.owned_by_proxima ? "Yes" : "No"}</div>,
-      width: "15%"   //
+      width: "15%"   
     },
   ];
 

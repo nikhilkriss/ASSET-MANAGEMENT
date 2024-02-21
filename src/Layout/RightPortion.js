@@ -15,6 +15,7 @@ function RightPortion(props) {
   const [sbeMode, setSbeMode] = useState(false);
   const [sbeAux, setSbeAux] = useState(false);
   const [change, setChange] = useState(false);
+ 
   const editHandler = (data) => {
     console.log(data);
     setEditData(data);
@@ -65,21 +66,33 @@ function RightPortion(props) {
             <div className="welcome-text">Welcome to Asset Management</div>
           </div>
         )}
-        {(toggle || props.page.page.allocateAsset || sbeMode || change) && (
+        {((toggle || props.page.page.allocateAsset || sbeMode || change)&& props.page.page?.scaa) && (
           <AllocateAsset
             editHandler={editHandler}
             sbe={sbeId}
             sbeName={sbeName}
           />
         )}
-        {(toggle || (props.page.page.editAsset && !change)) && (
+        {((toggle || props.page.page.allocateAsset || sbeMode || change)&& !props.page.page?.scaa) && (
+          <AllocateAsset
+            editHandler={editHandler}
+            sbe={sbeId}
+            sbeName={sbeName}
+          />
+        )}
+        {((toggle || props.page.page.editAsset && !change)) && (
           <EditAsset editingData={editData} undoEdit={undoEdit} />
         )}
         {(toggle || (props.page.page.eaa && !sbeMode)) && <Eaa />}
-        {(toggle || (props.page.page.sbe && !sbeMode)) && (
+
+        {((toggle || props.page.page.sbe && !sbeMode)&& props.page.page?.scsbe) && (
           <Sbe sbeAllocation={sbeAllocation} />
         )}
-        {(toggle || (props.page.page.sbc && !sbeMode)) && <Sbc />}
+        {((toggle || props.page.page.sbe && !sbeMode)&& !props.page.page?.scsbe) && (
+          <Sbe sbeAllocation={sbeAllocation} />
+        )}
+        {((toggle || props.page.page.sbc && !sbeMode)&& !props.page.page?.scsbs) && <Sbc />}
+        {((toggle || props.page.page.sbc && !sbeMode)&& props.page.page?.scsbs) && <Sbc />}
       </div>
       <footer className="footer">
         <div className="footer-section">

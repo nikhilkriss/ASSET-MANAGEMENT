@@ -8,7 +8,7 @@
 
 .bg-Image-Container{
     background-color: bisque;
-    background-image: url("../Assets/Images/Epm.jpg.jpeg");
+    background-image: url("../Assets/Images/asset.jpg");
     background-size: cover;
     width: 50%;
 }
@@ -16,7 +16,7 @@
 .text-container{
     background-color: white;
     text-align: center;
-    width: 50%;
+    width: 50%; 
     display: flex;
     flex-direction: column;
     justify-content: center;

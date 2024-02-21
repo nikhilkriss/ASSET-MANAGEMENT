@@ -4,6 +4,9 @@ import "../Assets/LeftPortion.css";
 function LeftPortion({ displayPage }) {
   const [showAssetsSubMenu, setShowAssetsSubMenu] = useState(false);
   const [showReportsSubMenu, setShowReportsSubMenu] = useState(false);
+  const [sameChange1,setSameChange1]=useState(false);
+  const [sameChange2,setSameChange2]=useState(false);
+  const [sameChange3,setSameChange3]=useState(false);
 
   const [page, setPage] = useState({
     welcome:true,
@@ -13,6 +16,9 @@ function LeftPortion({ displayPage }) {
     eaa: false,
     sbe: false,
     sbs: false,
+    scaa:false,
+    scsbe:false,
+    scsbs:false
   });
 
   useEffect(() => {
@@ -34,8 +40,10 @@ function LeftPortion({ displayPage }) {
       allocateAsset: false,
       eaa: false,
       sbe: false,
-      sbc: false,
+      sbc: false
+      
     });
+    
   };
   
   const handleaAllocateAsset = () => {
@@ -45,8 +53,10 @@ function LeftPortion({ displayPage }) {
       allocateAsset: true,
       eaa: false,
       sbe: false,
-      sbc: false
+      sbc: false,
+      scaa:(!sameChange1)
     });
+    setSameChange1(!sameChange1);
   };
   const handleEaa=()=>{
     setPage({
@@ -55,8 +65,8 @@ function LeftPortion({ displayPage }) {
       allocateAsset: false,
       eaa: true,
       sbe: false,
-      sbc: false
-    })
+      sbc: false,
+    });
   };
   const handleSbe=()=>{
     setPage({
@@ -65,8 +75,10 @@ function LeftPortion({ displayPage }) {
       allocateAsset: false,
       eaa: false,
       sbe: true,
-      sbc: false
-    })
+      sbc: false,
+      scsbe:(!sameChange2)
+    });
+    setSameChange2(!sameChange2);
   };
   const handleSbs=()=>{
     setPage({
@@ -75,8 +87,10 @@ function LeftPortion({ displayPage }) {
       allocateAsset: false,
       eaa: false,
       sbe: false,
-      sbc: true
+      sbc: true,
+      scsbs:(!sameChange3)
     });
+    setSameChange3(!sameChange3);
   };
   return (
     <div className="left-portion">

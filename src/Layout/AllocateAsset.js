@@ -40,7 +40,7 @@ const tableCustomStyles = {
     },
   },
 };
-const AllocateAsset = ({ editHandler, sbe, sbeName }) => {     //sbe means employeid 
+const AllocateAsset = ({ editHandler, sbe, sbeName, display }) => {     //sbe means employeid 
   const [deleteDialog, setDeleteDialog] = useState(false);
   const [giveChance, setGiveChance]=useState(false);
   const [assetData, setAssetData] = useState([]);
@@ -110,16 +110,25 @@ const AllocateAsset = ({ editHandler, sbe, sbeName }) => {     //sbe means emplo
   };
   const columns = [
     {
-      name: "Asset Id",
-      selector: (row) => row.asset_id,
-    },
-    {
-      name: "Asset",
+      name: "Asset Name",
       selector: (row) => row.asset_name,
     },
     {
       name: "Brand",
       selector: (row) => row.brand,
+    },
+    {
+      name: "Configuration",
+      cell: (row) => (
+        <div>
+          <span>{row.os}{row.os ? ', ' : ''}</span>
+          <span><span>{row.ram ? 'Ram:' : ''}</span> {row.ram}<span>{row.ram ? 'gb, ' : ''}</span></span>
+          <span><span>{row.memory ? 'Memory:' : ''}</span> {row.memory}<span>{row.memory ? 'gb, ' : ''}</span></span>
+          <span>{row.processor}{row.processor ? ', ' : ''}</span>
+          <span>{row.serial_number}</span>
+        </div>
+      ),
+      // width: "13%"
     },
     {
       name: "Actions",
@@ -204,4 +213,3 @@ const AllocateAsset = ({ editHandler, sbe, sbeName }) => {     //sbe means emplo
   );
 };
 export default AllocateAsset;
-// paginationRowsPerPageOptions={rowsPerPage}

@@ -2,9 +2,9 @@
     /* background-color:white; */
     width: 95%;
     height:69vh;
-    
+    margin-top: -40px;
 }
-.searchByEmployeeHeading{
+.searchByConfigHeading{
     color: rgba(0, 0, 0, 0.705);
     font-size: 22px;
     font-weight: 500;
@@ -32,7 +32,6 @@
 }
 .warning{
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    color: red;
 }
 .allocatebody{
     width:95%;
